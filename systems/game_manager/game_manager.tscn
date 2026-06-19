@@ -1,0 +1,19 @@
+[gd_scene format=3 uid="uid://b6kvno2p62li8"]
+
+[ext_resource type="PackedScene" uid="uid://w0drjhcrks8b" path="res://ui/main_menu/main_menu.tscn" id="1_eya3p"]
+[ext_resource type="Script" uid="uid://o8n5i5yaw3jf" path="res://systems/game_manager/game_manager.gd" id="1_fxq6w"]
+[ext_resource type="PackedScene" uid="uid://dyejqklkxu8aq" path="res://assets/maps/test_world.tscn" id="3_hmira"]
+
+[node name="GameManager" type="Node" unique_id=1187907162 node_paths=PackedStringArray("world_conatiner")]
+script = ExtResource("1_fxq6w")
+world_conatiner = NodePath("3DWorldContainer")
+
+[node name="MainMenu" parent="." unique_id=542858123 instance=ExtResource("1_eya3p")]
+
+[node name="3DWorldContainer" type="Node3D" parent="." unique_id=1331643036]
+
+[node name="TestWorld" parent="3DWorldContainer" unique_id=810854495 instance=ExtResource("3_hmira")]
+
+[node name="MultiplayerSpawner" type="MultiplayerSpawner" parent="." unique_id=1382485271]
+_spawnable_scenes = PackedStringArray("uid://v6njfv4epi7j")
+spawn_path = NodePath("../3DWorldContainer")
