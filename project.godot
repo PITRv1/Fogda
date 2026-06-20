@@ -29,7 +29,9 @@ enabled=PackedStringArray("res://addons/godotsteam/plugin.cfg")
 
 folder_colors={
 "res://assets/": "red",
-"res://systems/": "blue"
+"res://player/": "yellow",
+"res://systems/": "blue",
+"res://ui/": "green"
 }
 
 [input]

@@ -1,20 +1,32 @@
 [gd_scene format=3 uid="uid://v6njfv4epi7j"]
 
 [ext_resource type="Script" uid="uid://dbtelqo3qsbqc" path="res://player/player.gd" id="1_oul6g"]
-
-[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_rkbax"]
-
-[sub_resource type="CapsuleMesh" id="CapsuleMesh_g1dw6"]
+[ext_resource type="Script" uid="uid://c2vvv4qf26qv7" path="res://player/controllers/camera_controller.gd" id="2_rkbax"]
+[ext_resource type="Script" uid="uid://d2174cxqjfead" path="res://systems/state_machine/state_machine.gd" id="3_g1dw6"]
+[ext_resource type="Script" uid="uid://hd1lmwh1hh2k" path="res://systems/state_machine/player_states/idle_player_state.gd" id="4_yw30f"]
+[ext_resource type="Script" uid="uid://cfjh5ufvlfb7w" path="res://systems/state_machine/player_states/walking_player_state.gd" id="5_qjkh3"]
+[ext_resource type="Script" uid="uid://dh5wraa7052n3" path="res://systems/state_machine/player_states/inair_player_state.gd" id="6_g6k8r"]
 
 [sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_oul6g"]
 properties/0/path = NodePath(".:position")
 properties/0/spawn = true
 properties/0/replication_mode = 1
 
-[node name="Player" type="CharacterBody3D" unique_id=1187813961]
-script = ExtResource("1_oul6g")
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_rkbax"]
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=882957781]
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_g1dw6"]
+
+[node name="Player" type="CharacterBody3D" unique_id=1187813961 node_paths=PackedStringArray("camera_controller", "state_machine")]
+script = ExtResource("1_oul6g")
+camera_controller = NodePath("CameraController")
+state_machine = NodePath("StateMachine")
+look_sensitivity = 0.0009
+
+[node name="MultiplayerSynchronizer" type="MultiplayerSynchronizer" parent="." unique_id=295242381]
+replication_config = SubResource("SceneReplicationConfig_oul6g")
+
+[node name="PlayerCollision" type="CollisionShape3D" parent="." unique_id=882957781]
+unique_name_in_owner = true
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
 shape = SubResource("CapsuleShape3D_rkbax")
 
@@ -22,13 +34,40 @@ shape = SubResource("CapsuleShape3D_rkbax")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
 mesh = SubResource("CapsuleMesh_g1dw6")
 
-[node name="Head" type="Node3D" parent="." unique_id=371706036]
+[node name="HeadAnchor" type="Marker3D" parent="." unique_id=1721222122]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, 0)
 
-[node name="Neck" type="Node3D" parent="Head" unique_id=1481446669]
+[node name="CameraController" type="Node3D" parent="." unique_id=2110311610 node_paths=PackedStringArray("camera_controller_anchor")]
+script = ExtResource("2_rkbax")
+camera_controller_anchor = NodePath("../HeadAnchor")
 
-[node name="Camera" type="Camera3D" parent="Head/Neck" unique_id=1825404127]
+[node name="Head" type="Node3D" parent="CameraController" unique_id=371706036]
+unique_name_in_owner = true
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, 0)
+
+[node name="Camera" type="Camera3D" parent="CameraController/Head" unique_id=1825404127]
 unique_name_in_owner = true
 
-[node name="MultiplayerSynchronizer" type="MultiplayerSynchronizer" parent="." unique_id=295242381]
-replication_config = SubResource("SceneReplicationConfig_oul6g")
+[node name="StairsBelowRayCast" type="RayCast3D" parent="." unique_id=185514709]
+unique_name_in_owner = true
+
+[node name="StairsAheadRayCast" type="RayCast3D" parent="." unique_id=1760184447]
+unique_name_in_owner = true
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.517, -0.733)
+
+[node name="StateMachine" type="Node" parent="." unique_id=2042917096 node_paths=PackedStringArray("CURRENT_STATE")]
+script = ExtResource("3_g1dw6")
+CURRENT_STATE = NodePath("IdleState")
+
+[node name="IdleState" type="Node" parent="StateMachine" unique_id=1017802009 node_paths=PackedStringArray("walking_state")]
+script = ExtResource("4_yw30f")
+walking_state = NodePath("../WalkingState")
+
+[node name="WalkingState" type="Node" parent="StateMachine" unique_id=2055799719 node_paths=PackedStringArray("idle_state", "inair_state")]
+script = ExtResource("5_qjkh3")
+idle_state = NodePath("../IdleState")
+inair_state = NodePath("../InAirState")
+
+[node name="InAirState" type="Node" parent="StateMachine" unique_id=939290259 node_paths=PackedStringArray("idle_state")]
+script = ExtResource("6_g6k8r")
+idle_state = NodePath("../IdleState")

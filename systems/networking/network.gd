@@ -53,7 +53,7 @@ func add_player(id : int = 1):
 
 func remove_player(id : int):
 	var players := get_tree().get_nodes_in_group("players")
-	var player_to_remove : int = players.find_custom(func(item): item.name == str(id))
+	var player_to_remove : int = players.find_custom(func(item): return item.name == str(id))
 	
 	if player_to_remove != -1:
 		players[player_to_remove].queue_free()
