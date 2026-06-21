@@ -83,6 +83,11 @@ func _enter_tree() -> void:
 	add_to_group("players")
 
 func _ready() -> void:
+	print("My peer id: ", multiplayer.get_unique_id())
+	print("Am I server: ", multiplayer.is_server())
+	print("Am I authority of this node: ", is_multiplayer_authority())
+	
+	
 	if !is_multiplayer_authority() or dummy:
 		set_process(false)
 		set_physics_process(false)
@@ -223,6 +228,8 @@ func update_gravity(delta, gravity : float = local_gravity) -> void:
 func update_input(delta) -> void:
 	## Client side input collection
 	if is_multiplayer_authority():
+		print("CLIENT sending input: ", multiplayer.get_unique_id())
+		
 		var input_data := {
 			"input_dir" : Input.get_vector("left", "right", "forward", "back").normalized(),
 			"crouch" : Input.is_action_pressed("crouch"),
@@ -232,6 +239,8 @@ func update_input(delta) -> void:
 
 	## Server side application
 	if multiplayer.is_server():
+		print("SERVER applying input: ", _server_inputs)
+		
 		if is_on_floor(): _last_frame_was_on_floor = Engine.get_physics_frames()
 		
 		input_dir = _server_inputs["input_dir"]
@@ -256,6 +265,9 @@ func update_velocity(delta) -> void:
 @rpc("any_peer", "call_local", "unreliable_ordered")
 func _send_input(input_data : Dictionary):
 	var sender := multiplayer.get_remote_sender_id()
-	if sender != 0  and sender != get_multiplayer_authority(): return
+	print("Input received, sender: ", sender, " authority: ", get_multiplayer_authority())
+	if sender != 0  and sender != get_multiplayer_authority(): 
+		print("REJECTED") 
+		return
 
 	_server_inputs = input_data
