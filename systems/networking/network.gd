@@ -25,11 +25,16 @@ func _on_lobby_created(results : int, lobby_id : int):
 		peer.create_host()
 		
 		multiplayer.multiplayer_peer = peer
-		multiplayer.peer_connected.connect(add_player)
+		multiplayer.peer_connected.connect(_on_peer_connected)
 		multiplayer.peer_disconnected.connect(remove_player)
 		add_player(1)
 		DisplayServer.clipboard_set(str(Network.lobby_id))
 
+func _on_peer_connected(id : int):
+	if not multiplayer.is_server():
+		return
+	
+	add_player(id)
 
 func join_lobby(lobby_id : int):
 	is_joining = true
@@ -47,11 +52,17 @@ func _on_lobby_joined(lobby_id : int, permissions : int, locked : bool, response
 	is_joining = false
 
 func add_player(id : int = 1):
+	if not multiplayer.is_server():
+		return
+	
 	var player = GlobalAssets.PLAYER.instantiate()
 	player.name = str(id)
 	Global.game_manager.world_conatiner.add_child.call_deferred(player, true)
 
 func remove_player(id : int):
+	if not multiplayer.is_server():
+		return
+
 	var players := get_tree().get_nodes_in_group("players")
 	var player_to_remove : int = players.find_custom(func(item): return item.name == str(id))
 	

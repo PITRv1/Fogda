@@ -6,6 +6,7 @@
 [ext_resource type="Script" uid="uid://hd1lmwh1hh2k" path="res://systems/state_machine/player_states/idle_player_state.gd" id="4_yw30f"]
 [ext_resource type="Script" uid="uid://cfjh5ufvlfb7w" path="res://systems/state_machine/player_states/walking_player_state.gd" id="5_qjkh3"]
 [ext_resource type="Script" uid="uid://dh5wraa7052n3" path="res://systems/state_machine/player_states/inair_player_state.gd" id="6_g6k8r"]
+[ext_resource type="Script" uid="uid://be5dhjq8ervsy" path="res://systems/state_machine/player_states/sprinting_player_state.gd" id="7_boad6"]
 
 [sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_oul6g"]
 properties/0/path = NodePath(".:position")
@@ -21,6 +22,7 @@ script = ExtResource("1_oul6g")
 camera_controller = NodePath("CameraController")
 state_machine = NodePath("StateMachine")
 look_sensitivity = 0.0009
+ground_accel = 20.0
 
 [node name="MultiplayerSynchronizer" type="MultiplayerSynchronizer" parent="." unique_id=295242381]
 replication_config = SubResource("SceneReplicationConfig_oul6g")
@@ -71,3 +73,6 @@ inair_state = NodePath("../InAirState")
 [node name="InAirState" type="Node" parent="StateMachine" unique_id=939290259 node_paths=PackedStringArray("idle_state")]
 script = ExtResource("6_g6k8r")
 idle_state = NodePath("../IdleState")
+
+[node name="SprintingState" type="Node" parent="StateMachine" unique_id=562023350]
+script = ExtResource("7_boad6")
