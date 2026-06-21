@@ -83,6 +83,11 @@ func _enter_tree() -> void:
 	add_to_group("players")
 
 func _ready() -> void:
+	print("Player node ready on peer ", multiplayer.get_unique_id(), 
+	  " node name: ", name, 
+	  " authority: ", get_multiplayer_authority(),
+	  " position: ", global_position)
+	
 	if dummy:
 		set_process(false)
 		set_physics_process(false)

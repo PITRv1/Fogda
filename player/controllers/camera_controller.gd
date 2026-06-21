@@ -10,6 +10,8 @@ var owner_player : Player
 var mouse_input := Vector2.ZERO
 var headbob_time := 0.0
 
+
+
 func _input(event: InputEvent) -> void:
 	if event is InputEventMouseMotion:
 		mouse_input = event.relative
@@ -47,9 +49,9 @@ func side_sway_effect() -> void:
 		head.rotation.z = lerp_angle(head.rotation.z, deg_to_rad(0), 0.05)
 
 func headbob_effect(delta, speed_multiplier : float = 0.0) -> void:
+	if owner_player == null: return
 	if !owner_player.headbob_on: return
-	if !owner_player.is_multiplayer_authority() : return
-	
+	if !owner_player.is_multiplayer_authority(): return
 	
 	headbob_time += delta * owner_player.velocity.length()
 

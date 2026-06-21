@@ -29,6 +29,7 @@ func physics_update(delta: float) -> void:
 	owner_entity.update_input(delta)
 	owner_entity.update_velocity(delta)
 	
-	owner_entity.camera_controller.headbob_effect(delta)
+	if owner_entity.is_multiplayer_authority():
+		owner_entity.camera_controller.headbob_effect(delta)
 	
 	owner_entity.fill_stamina(delta)
