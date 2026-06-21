@@ -102,7 +102,8 @@ func _ready() -> void:
 
 
 func _physics_process(delta: float) -> void:
-	camera_controller.update_camera_controller(delta)
+	if is_multiplayer_authority():
+		camera_controller.update_camera_controller(delta)
 
 ######################################################
 
