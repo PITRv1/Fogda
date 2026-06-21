@@ -48,6 +48,8 @@ func side_sway_effect() -> void:
 
 func headbob_effect(delta, speed_multiplier : float = 0.0) -> void:
 	if !owner_player.headbob_on: return
+	if !owner_player.is_multiplayer_authority() : return
+	
 	
 	headbob_time += delta * owner_player.velocity.length()
 
