@@ -83,21 +83,23 @@ func _enter_tree() -> void:
 	add_to_group("players")
 
 func _ready() -> void:
-	print("My peer id: ", multiplayer.get_unique_id())
-	print("Am I server: ", multiplayer.is_server())
-	print("Am I authority of this node: ", is_multiplayer_authority())
-	
-	
-	if !is_multiplayer_authority() or dummy:
+	if dummy:
 		set_process(false)
 		set_physics_process(false)
 		state_machine.disabled = true
-		
-	elif is_multiplayer_authority():
+		return
+	
+	if is_multiplayer_authority():
 		camera_controller.setup_camera_controller(self)
 		state_machine.setup_state_machine(self)
-		
 		Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
+	elif multiplayer.is_server():
+		state_machine.setup_state_machine(self)
+	else:
+		set_process(false)
+		set_physics_process(false)
+		state_machine.disabled = true
+
 
 func _physics_process(delta: float) -> void:
 	camera_controller.update_camera_controller(delta)
@@ -228,18 +230,23 @@ func update_gravity(delta, gravity : float = local_gravity) -> void:
 func update_input(delta) -> void:
 	## Client side input collection
 	if is_multiplayer_authority():
-		print("CLIENT sending input: ", multiplayer.get_unique_id())
 		
 		var input_data := {
 			"input_dir" : Input.get_vector("left", "right", "forward", "back").normalized(),
 			"crouch" : Input.is_action_pressed("crouch"),
 			"sprint" : Input.is_action_pressed("sprint")
 		}
+		
+		#var err = _send_input.rpc_id(1, input_data)
+		#print("RPC error code: ", err)  # should print 0 if OK
+	#
+		
+		
 		_send_input.rpc_id(1, input_data)
+		
 
 	## Server side application
 	if multiplayer.is_server():
-		print("SERVER applying input: ", _server_inputs)
 		
 		if is_on_floor(): _last_frame_was_on_floor = Engine.get_physics_frames()
 		
@@ -253,7 +260,7 @@ func update_input(delta) -> void:
 			
 		else:
 			_handle_air_physics(delta)
-
+		
 	
 func update_velocity(delta) -> void:
 	if not multiplayer.is_server(): return
@@ -265,9 +272,7 @@ func update_velocity(delta) -> void:
 @rpc("any_peer", "call_local", "unreliable_ordered")
 func _send_input(input_data : Dictionary):
 	var sender := multiplayer.get_remote_sender_id()
-	print("Input received, sender: ", sender, " authority: ", get_multiplayer_authority())
 	if sender != 0  and sender != get_multiplayer_authority(): 
-		print("REJECTED") 
 		return
 
 	_server_inputs = input_data
