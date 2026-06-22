@@ -1,6 +1,6 @@
 extends MultiplayerSynchronizer
 
-var input_dir
+var input_dir := Vector2.ZERO
 
 func _ready() -> void:
 	
