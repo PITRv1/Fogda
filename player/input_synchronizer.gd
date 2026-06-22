@@ -1,6 +1,7 @@
 extends MultiplayerSynchronizer
 
 var input_dir := Vector2.ZERO
+var look_yaw := 0.0
 
 func _ready() -> void:
 	

@@ -75,11 +75,6 @@ func _enter_tree() -> void:
 	add_to_group("players")
 
 func _ready() -> void:
-	print("Player node ready on peer ", multiplayer.get_unique_id(), 
-	  " node name: ", name, 
-	  " authority: ", get_multiplayer_authority(),
-	  " position: ", global_position)
-	
 	var is_local_player := name.to_int() == multiplayer.get_unique_id()
 	
 	if dummy:
@@ -94,9 +89,11 @@ func _ready() -> void:
 		
 	if multiplayer.is_server():
 		state_machine.setup_state_machine(self)
-	else:
-		state_machine.disabled = true
 	
+	if !multiplayer.is_server() and !is_local_player:
+		set_process(false)
+		set_physics_process(false)
+		state_machine.disabled = true
 
 
 
@@ -235,6 +232,9 @@ func update_input(delta) -> void:
 	if is_on_floor(): _last_frame_was_on_floor = Engine.get_physics_frames()
 	
 	input_dir = %InputSynchronizer.input_dir
+	
+	self.rotation.y = %InputSynchronizer.look_yaw
+	
 	wish_dir = self.global_transform.basis * Vector3(input_dir.x, 0., input_dir.y)
 
 	_handle_crouch(delta)

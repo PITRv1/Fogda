@@ -21,6 +21,9 @@ properties/1/replication_mode = 1
 properties/0/path = NodePath("InputSynchronizer:input_dir")
 properties/0/spawn = true
 properties/0/replication_mode = 1
+properties/1/path = NodePath("InputSynchronizer:look_yaw")
+properties/1/spawn = true
+properties/1/replication_mode = 1
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_rkbax"]
 
@@ -38,7 +41,6 @@ replication_config = SubResource("SceneReplicationConfig_oul6g")
 
 [node name="InputSynchronizer" type="MultiplayerSynchronizer" parent="." unique_id=1714387637]
 unique_name_in_owner = true
-root_path = NodePath(".")
 replication_config = SubResource("SceneReplicationConfig_hg6s5")
 script = ExtResource("2_rgyib")
 
