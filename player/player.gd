@@ -70,16 +70,9 @@ var is_depleted := false
 var is_dead : bool = false
 
 
-var _server_inputs := {
-	"input_dir" : Vector2.ZERO,
-	"crouch" : false,
-	"sprint" : false
-}
-
-
-
 func _enter_tree() -> void:
 	set_multiplayer_authority(name.to_int())
+	%InputSynchronizer.set_multiplayer_authority(name.to_int())
 	add_to_group("players")
 
 func _ready() -> void:
@@ -98,6 +91,7 @@ func _ready() -> void:
 		camera_controller.setup_camera_controller(self)
 		state_machine.setup_state_machine(self)
 		Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
+		
 	elif multiplayer.is_server():
 		state_machine.setup_state_machine(self)
 	else:
@@ -234,39 +228,21 @@ func update_gravity(delta, gravity : float = local_gravity) -> void:
 
 
 func update_input(delta) -> void:
-	## Client side input collection
-	if is_multiplayer_authority():
-		
-		var input_data := {
-			"input_dir" : Input.get_vector("left", "right", "forward", "back").normalized(),
-			"crouch" : Input.is_action_pressed("crouch"),
-			"sprint" : Input.is_action_pressed("sprint")
-		}
-		
-		#var err = _send_input.rpc_id(1, input_data)
-		#print("RPC error code: ", err)  # should print 0 if OK
-	#
-		
-		
-		_send_input.rpc_id(1, input_data)
-		
+	if not multiplayer.is_server(): return
 
-	## Server side application
-	if multiplayer.is_server():
-		
-		if is_on_floor(): _last_frame_was_on_floor = Engine.get_physics_frames()
-		
-		input_dir = _server_inputs["input_dir"]
-		wish_dir = self.global_transform.basis * Vector3(input_dir.x, 0., input_dir.y)
+	if is_on_floor(): _last_frame_was_on_floor = Engine.get_physics_frames()
+	
+	input_dir = %InputSynchronizer.input_dir
+	wish_dir = self.global_transform.basis * Vector3(input_dir.x, 0., input_dir.y)
 
-		_handle_crouch(delta)
+	_handle_crouch(delta)
+	
+	if is_on_floor() or _snapped_to_stairs_last_frame:
+		_handle_ground_physics(delta)
 		
-		if is_on_floor() or _snapped_to_stairs_last_frame:
-			_handle_ground_physics(delta)
-			
-		else:
-			_handle_air_physics(delta)
-		
+	else:
+		_handle_air_physics(delta)
+	
 	
 func update_velocity(delta) -> void:
 	if not multiplayer.is_server(): return
@@ -274,11 +250,3 @@ func update_velocity(delta) -> void:
 	if not snap_up_to_stairs_check(delta):
 		move_and_slide()
 		snap_down_to_stairs_check()
-
-@rpc("any_peer", "call_local", "unreliable_ordered")
-func _send_input(input_data : Dictionary):
-	var sender := multiplayer.get_remote_sender_id()
-	if sender != 0  and sender != get_multiplayer_authority(): 
-		return
-
-	_server_inputs = input_data
