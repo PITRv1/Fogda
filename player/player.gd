@@ -75,26 +75,28 @@ func _enter_tree() -> void:
 	add_to_group("players")
 
 func _ready() -> void:
-	var is_local_player := name.to_int() == multiplayer.get_unique_id()
-	
 	if dummy:
 		set_process(false)
 		set_physics_process(false)
 		state_machine.disabled = true
 		return
 	
+	var is_server := multiplayer.is_server()
+	var is_local_player := name.to_int() == multiplayer.get_unique_id()
+
+	if is_server:
+		state_machine.setup_state_machine(self)
+	
 	if is_local_player:
 		camera_controller.setup_camera_controller(self)
 		Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
-		
-	if multiplayer.is_server():
-		state_machine.setup_state_machine(self)
-	
-	if !multiplayer.is_server() and !is_local_player:
-		set_process(false)
-		set_physics_process(false)
-		state_machine.disabled = true
 
+	if not is_server:
+		state_machine.disabled = true
+		
+		if not is_local_player:
+			set_process(false)
+			set_physics_process(false)
 
 
 func _physics_process(delta: float) -> void:
