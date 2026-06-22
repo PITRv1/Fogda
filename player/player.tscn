@@ -29,11 +29,13 @@ script = ExtResource("1_oul6g")
 camera_controller = NodePath("CameraController")
 input_handeler = NodePath("InputHandeler")
 state_machine = NodePath("StateMachine")
-look_sensitivity = 0.0009
+look_sensitivity = 0.0011
 walk_speed = 5.0
-sprint_speed = 7.0
+sprint_speed = 7.5
 crouch_speed = 4.0
-ground_accel = 30.0
+ground_accel = 40.0
+slide_speed_threshold = 4.0
+vel_cam_allignment_allowed_deviation = 0.9
 use_stamina = false
 
 [node name="MultiplayerSynchronizer" type="MultiplayerSynchronizer" parent="." unique_id=295242381]
@@ -91,12 +93,13 @@ script = ExtResource("6_g6k8r")
 idle_state = NodePath("../IdleState")
 sliding_state = NodePath("../SlidingState")
 
-[node name="SprintingState" type="Node" parent="StateMachine" unique_id=562023350 node_paths=PackedStringArray("idle_state", "inair_state", "walking_state", "sliding_state")]
+[node name="SprintingState" type="Node" parent="StateMachine" unique_id=562023350 node_paths=PackedStringArray("idle_state", "inair_state", "walking_state", "sliding_state", "crouching_state")]
 script = ExtResource("7_boad6")
 idle_state = NodePath("../IdleState")
 inair_state = NodePath("../InAirState")
 walking_state = NodePath("../WalkingState")
 sliding_state = NodePath("../SlidingState")
+crouching_state = NodePath("../CrouchingState")
 
 [node name="CrouchingState" type="Node" parent="StateMachine" unique_id=1976664509 node_paths=PackedStringArray("idle_state", "inair_state", "sprinting_state")]
 script = ExtResource("8_hg6s5")

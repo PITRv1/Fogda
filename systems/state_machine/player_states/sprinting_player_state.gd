@@ -4,6 +4,8 @@ class_name SprintingPlayerState extends PlayerState
 @export var inair_state : InAirPlayerState
 @export var walking_state : WalkingPlayerState
 @export var sliding_state : SlidingPlayerState
+@export var crouching_state : CrouchingPlayerState
+
 
 
 func enter(_prev_state):
@@ -20,8 +22,9 @@ func update(_delta : float) -> void:
 	if not owner_entity.is_on_floor():
 		transition.emit(inair_state)
 
-	if owner_entity.input_handeler.crouch_held and Vector3(owner_entity.velocity.x,0,owner_entity.velocity.y).length() > owner_entity.slide_speed_threshold and owner_entity.can_slide:
+	if owner_entity.can_slide:
 		transition.emit(sliding_state)
+
 
 func physics_update(delta: float) -> void:
 	owner_entity.update_gravity(delta)

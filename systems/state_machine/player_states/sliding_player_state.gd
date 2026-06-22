@@ -16,7 +16,10 @@ func enter(_prev_state)->void:
 	saved_friction = owner_entity.ground_friction
 	owner_entity.ground_friction = 1.0
 	
+	# gl understanding this shit future me lmao
 	desire_direction = -owner_entity.camera_controller.main_camera.global_transform.basis.z
+	var flat_desire_dir = Vector3(desire_direction.x,0,desire_direction.z).normalized()
+	var boost_dir = (flat_desire_dir + owner_entity.wish_dir).normalized()
 	
 	var flat_speed = Vector3(owner_entity.velocity.x, 0, owner_entity.velocity.z).length()
 	var boost_ratio = flat_speed / (owner_entity.sprint_speed + 1)
@@ -24,7 +27,7 @@ func enter(_prev_state)->void:
 	
 	var new_boost = owner_entity.slide_boost_power + owner_entity.slide_boost_power * boost_flipped
 	
-	owner_entity.velocity += desire_direction * new_boost
+	owner_entity.velocity += Vector3(boost_dir.x,0,boost_dir.y) * new_boost
 	
 	owner_entity.is_crouched = true
 	owner_entity.side_sway_on = false
@@ -40,9 +43,6 @@ func exit()->void:
 		owner_entity.side_sway_on = false
 
 	owner_entity.ground_friction = saved_friction
-	
-	owner_entity.can_slide = false
-	get_tree().create_timer(0.001).timeout.connect(func(): owner_entity.can_slide = true)
 
 func update(_delta: float)->void:
 	if owner_entity.input_handeler.crouch_held and owner_entity.velocity.length() < owner_entity.slide_speed_threshold:

@@ -22,8 +22,6 @@ class_name Player extends CharacterBody3D
 @export_category("Global movement variables")
 @export var local_gravity := 16.0
 @export var jump_power := 5.0
-@export var slide_boost_power := 5.0
-@export var slide_speed_threshold := 8.0
 
 @export_group("Ground")
 @export var walk_speed := 6.0
@@ -37,6 +35,10 @@ class_name Player extends CharacterBody3D
 @export var ground_decel := 10.0
 @export var ground_friction := 6.0
 
+@export_subgroup("Slide")
+@export var slide_boost_power := 5.0
+@export var slide_speed_threshold := 8.0
+@export var vel_cam_allignment_allowed_deviation := 0.3
 
 @export_subgroup("Stamina")
 @export var use_stamina := true
@@ -179,17 +181,6 @@ func _handle_ground_physics(delta: float) -> void:
 	
 	friction(0.0, ground_friction, delta)
 	
-#
-#func _handle_air_physics(delta: float) -> void:
-	#var cur_speed_in_wish_dir = self.velocity.dot(wish_dir)
-	#var capped_speed = min((air_move_speed * wish_dir).length(), air_cap)
-#
-	#var add_speed_till_cap = capped_speed - cur_speed_in_wish_dir
-	#if add_speed_till_cap > 0:
-		#var accel_speed = air_accel * air_move_speed * delta # Usually is adding this one.
-		#accel_speed = min(accel_speed, add_speed_till_cap) 
-		#self.velocity += accel_speed * wish_dir
-
 func _handle_air_physics(delta: float) -> void:
 	var cur_speed_in_wish_dir = self.velocity.dot(wish_dir)
 	var capped_speed = min((air_move_speed * wish_dir).length(), air_cap)
@@ -251,6 +242,22 @@ func _handle_crouch(delta) -> void:
 func _can_uncrouch():
 	return not test_move(transform, Vector3(0,crouch_translate,0))
 
+
+func _is_velocity_aligned_with_camera():
+	var desire_direction = -camera_controller.main_camera.global_transform.basis.z
+	
+	#var flat_vel_dir = Vector3(velocity.x, 0, velocity.z).normalized()
+	var flat_desire_dir = Vector3(desire_direction.x,0,desire_direction.y).normalized()
+	
+	return 1.0 - vel_cam_allignment_allowed_deviation < clampf(flat_desire_dir.dot(wish_dir),-1,1)
+
+func helper_delete_me():
+	var desire_direction = -camera_controller.main_camera.global_transform.basis.z
+	
+	var flat_vel_dir = Vector3(velocity.x, 0, velocity.z).normalized()
+	var flat_desire_dir = Vector3(desire_direction.x,0,desire_direction.y).normalized()
+	print(clampf(flat_desire_dir.dot(wish_dir),-1,1))
+
 ##################################
 
 func fill_stamina(delta):
@@ -297,7 +304,8 @@ func update_input(delta) -> void:
 	# Read local inputs directly
 	input_dir = input_handeler.input_dir
 	wish_dir = self.global_transform.basis * Vector3(input_dir.x, 0., input_dir.y)
-
+	can_slide = _is_velocity_aligned_with_camera() and input_handeler.crouch_held
+	
 	_handle_crouch(delta)
 
 	if is_on_floor() or _snapped_to_stairs_last_frame:

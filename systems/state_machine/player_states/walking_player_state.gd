@@ -24,7 +24,7 @@ func update(_delta : float) -> void:
 	if owner_entity.input_handeler.sprint_held and owner_entity.can_use_stamina():
 		transition.emit(sprinting_state)
 
-	if owner_entity.input_handeler.crouch_held and Vector3(owner_entity.velocity.x,0,owner_entity.velocity.y).length() > owner_entity.slide_speed_threshold and owner_entity.can_slide:
+	if owner_entity.can_slide:
 		transition.emit(sliding_state)
 
 
