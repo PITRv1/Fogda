@@ -71,8 +71,7 @@ var is_dead : bool = false
 
 
 func _enter_tree() -> void:
-	
-	%InputSynchronizer.set_multiplayer_authority(name.to_int())
+	set_multiplayer_authority(name.to_int())
 	add_to_group("players")
 
 func _ready() -> void:
@@ -82,23 +81,14 @@ func _ready() -> void:
 		state_machine.disabled = true
 		return
 	
-	var is_server := multiplayer.is_server()
-	var is_local_player := name.to_int() == multiplayer.get_unique_id()
-
-	if is_server:
-		state_machine.setup_state_machine(self)
-	
-	if is_local_player:
-		camera_controller.setup_camera_controller(self)
-		Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
-
-	if not is_server:
+	if is_multiplayer_authority():
+			camera_controller.setup_camera_controller(self)
+			state_machine.setup_state_machine(self)
+			Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
+	else:
+		set_process(false)
+		set_physics_process(false)
 		state_machine.disabled = true
-		
-		if not is_local_player:
-			set_process(false)
-			set_physics_process(false)
-
 
 func _physics_process(delta: float) -> void:
 	var is_local_player := name.to_int() == multiplayer.get_unique_id()
@@ -230,27 +220,24 @@ func update_gravity(delta, gravity : float = local_gravity) -> void:
 
 
 func update_input(delta) -> void:
-	if not multiplayer.is_server(): return
+	if not is_multiplayer_authority(): return
 
 	if is_on_floor(): _last_frame_was_on_floor = Engine.get_physics_frames()
-	
-	input_dir = %InputSynchronizer.input_dir
-	
-	self.rotation.y = %InputSynchronizer.look_yaw
-	
+
+	# Read local inputs directly
+	input_dir = Input.get_vector("left", "right", "forward", "back").normalized()
 	wish_dir = self.global_transform.basis * Vector3(input_dir.x, 0., input_dir.y)
 
 	_handle_crouch(delta)
-	
+
 	if is_on_floor() or _snapped_to_stairs_last_frame:
 		_handle_ground_physics(delta)
-		
 	else:
 		_handle_air_physics(delta)
 	
 	
 func update_velocity(delta) -> void:
-	if not multiplayer.is_server(): return
+	if not is_multiplayer_authority(): return
 	
 	if not snap_up_to_stairs_check(delta):
 		move_and_slide()

@@ -9,15 +9,7 @@ var owner_player : Player
 var mouse_input := Vector2.ZERO
 var headbob_time := 0.0
 
-var look_yaw: float = 0.0
-var look_pitch: float = 0.0
-
-func _ready() -> void:
-	set_as_top_level(true)
-
 func _input(event: InputEvent) -> void:
-	if owner_player and owner_player.name.to_int() != multiplayer.get_unique_id(): return
-	
 	if event is InputEventMouseMotion:
 		mouse_input = event.relative
 
@@ -25,29 +17,22 @@ func setup_camera_controller(owner_entity : Player):
 	owner_player = owner_entity
 	main_camera.make_current()
 
-
 func update_camera_controller(delta: float) -> void:
 	if owner_player == null: return
+	
 	self.global_position = camera_controller_anchor.global_position
 	
 	_update_camera_rotation()
 	_handle_active_camera_effects(delta)
 
-
 func _update_camera_rotation():
 	if not Input.get_mouse_mode() == Input.MOUSE_MODE_CAPTURED: return
 	
-	look_yaw -= mouse_input.x * owner_player.look_sensitivity
-	look_pitch -= mouse_input.y * owner_player.look_sensitivity
-	look_pitch = clamp(look_pitch, deg_to_rad(-90), deg_to_rad(90))
+	# Apply rotation directly to the local player and camera body
+	owner_player.rotate_y(-mouse_input.x * owner_player.look_sensitivity)
+	main_camera.rotate_x(-mouse_input.y * owner_player.look_sensitivity)
+	main_camera.rotation.x = clamp(main_camera.rotation.x, deg_to_rad(-90), deg_to_rad(90))
 	mouse_input = Vector2.ZERO
-	
-	head.rotation.y = look_yaw
-	main_camera.rotation.x = look_pitch
-
-	var input_sync = owner_player.get_node_or_null("%InputSynchronizer")
-	if input_sync:
-		input_sync.look_yaw = look_yaw
 
 func _handle_active_camera_effects(_delta) -> void:
 	if owner_player.side_sway_on:
