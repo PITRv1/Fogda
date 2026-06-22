@@ -7,6 +7,9 @@
 [ext_resource type="Script" uid="uid://cfjh5ufvlfb7w" path="res://systems/state_machine/player_states/walking_player_state.gd" id="5_qjkh3"]
 [ext_resource type="Script" uid="uid://dh5wraa7052n3" path="res://systems/state_machine/player_states/inair_player_state.gd" id="6_g6k8r"]
 [ext_resource type="Script" uid="uid://be5dhjq8ervsy" path="res://systems/state_machine/player_states/sprinting_player_state.gd" id="7_boad6"]
+[ext_resource type="Script" uid="uid://dg1pe1p1vmu41" path="res://systems/state_machine/player_states/crouching_player_state.gd" id="8_hg6s5"]
+[ext_resource type="Script" uid="uid://bswk8sqbocga0" path="res://player/input_handeler.gd" id="8_rgyib"]
+[ext_resource type="Script" uid="uid://drkbk8s8k6q32" path="res://systems/state_machine/player_states/sliding_player_state.gd" id="9_8t03j"]
 
 [sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_oul6g"]
 properties/0/path = NodePath(".:position")
@@ -16,31 +19,38 @@ properties/1/path = NodePath(".:rotation")
 properties/1/spawn = true
 properties/1/replication_mode = 1
 
-[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_rkbax"]
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_hg6s5"]
+height = 1.7387695
 
 [sub_resource type="CapsuleMesh" id="CapsuleMesh_g1dw6"]
 
-[node name="Player" type="CharacterBody3D" unique_id=1187813961 node_paths=PackedStringArray("camera_controller", "state_machine")]
+[node name="Player" type="CharacterBody3D" unique_id=1187813961 node_paths=PackedStringArray("camera_controller", "input_handeler", "state_machine")]
 script = ExtResource("1_oul6g")
 camera_controller = NodePath("CameraController")
+input_handeler = NodePath("InputHandeler")
 state_machine = NodePath("StateMachine")
 look_sensitivity = 0.0009
-ground_accel = 20.0
+walk_speed = 5.0
+sprint_speed = 7.0
+crouch_speed = 4.0
+ground_accel = 30.0
+use_stamina = false
 
 [node name="MultiplayerSynchronizer" type="MultiplayerSynchronizer" parent="." unique_id=295242381]
 replication_config = SubResource("SceneReplicationConfig_oul6g")
 
 [node name="PlayerCollision" type="CollisionShape3D" parent="." unique_id=882957781]
 unique_name_in_owner = true
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
-shape = SubResource("CapsuleShape3D_rkbax")
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.86938477, 0)
+shape = SubResource("CapsuleShape3D_hg6s5")
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="." unique_id=1463840154]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+visible = false
 mesh = SubResource("CapsuleMesh_g1dw6")
 
 [node name="HeadAnchor" type="Marker3D" parent="." unique_id=1721222122]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.2969189, 0)
 
 [node name="CameraController" type="Node3D" parent="." unique_id=2110311610 node_paths=PackedStringArray("camera_controller_anchor")]
 script = ExtResource("2_rkbax")
@@ -48,7 +58,6 @@ camera_controller_anchor = NodePath("../HeadAnchor")
 
 [node name="Head" type="Node3D" parent="CameraController" unique_id=371706036]
 unique_name_in_owner = true
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, 0)
 
 [node name="Camera" type="Camera3D" parent="CameraController/Head" unique_id=1825404127]
 unique_name_in_owner = true
@@ -64,18 +73,44 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.517, -0.733)
 script = ExtResource("3_g1dw6")
 CURRENT_STATE = NodePath("IdleState")
 
-[node name="IdleState" type="Node" parent="StateMachine" unique_id=1017802009 node_paths=PackedStringArray("walking_state")]
+[node name="IdleState" type="Node" parent="StateMachine" unique_id=1017802009 node_paths=PackedStringArray("walking_state", "crouching_state")]
 script = ExtResource("4_yw30f")
 walking_state = NodePath("../WalkingState")
+crouching_state = NodePath("../CrouchingState")
 
-[node name="WalkingState" type="Node" parent="StateMachine" unique_id=2055799719 node_paths=PackedStringArray("idle_state", "inair_state")]
+[node name="WalkingState" type="Node" parent="StateMachine" unique_id=2055799719 node_paths=PackedStringArray("idle_state", "inair_state", "crouching_state", "sprinting_state", "sliding_state")]
 script = ExtResource("5_qjkh3")
 idle_state = NodePath("../IdleState")
 inair_state = NodePath("../InAirState")
+crouching_state = NodePath("../CrouchingState")
+sprinting_state = NodePath("../SprintingState")
+sliding_state = NodePath("../SlidingState")
 
-[node name="InAirState" type="Node" parent="StateMachine" unique_id=939290259 node_paths=PackedStringArray("idle_state")]
+[node name="InAirState" type="Node" parent="StateMachine" unique_id=939290259 node_paths=PackedStringArray("idle_state", "sliding_state")]
 script = ExtResource("6_g6k8r")
 idle_state = NodePath("../IdleState")
+sliding_state = NodePath("../SlidingState")
 
-[node name="SprintingState" type="Node" parent="StateMachine" unique_id=562023350]
+[node name="SprintingState" type="Node" parent="StateMachine" unique_id=562023350 node_paths=PackedStringArray("idle_state", "inair_state", "walking_state", "sliding_state")]
 script = ExtResource("7_boad6")
+idle_state = NodePath("../IdleState")
+inair_state = NodePath("../InAirState")
+walking_state = NodePath("../WalkingState")
+sliding_state = NodePath("../SlidingState")
+
+[node name="CrouchingState" type="Node" parent="StateMachine" unique_id=1976664509 node_paths=PackedStringArray("idle_state", "inair_state", "sprinting_state")]
+script = ExtResource("8_hg6s5")
+idle_state = NodePath("../IdleState")
+inair_state = NodePath("../InAirState")
+sprinting_state = NodePath("../SprintingState")
+
+[node name="SlidingState" type="Node" parent="StateMachine" unique_id=146208436 node_paths=PackedStringArray("inair_state", "idle_state", "crouch_state", "walking_state")]
+script = ExtResource("9_8t03j")
+inair_state = NodePath("../InAirState")
+idle_state = NodePath("../IdleState")
+crouch_state = NodePath("../CrouchingState")
+walking_state = NodePath("../WalkingState")
+
+[node name="InputHandeler" type="Node" parent="." unique_id=1253015289]
+script = ExtResource("8_rgyib")
+invert_sprint = true

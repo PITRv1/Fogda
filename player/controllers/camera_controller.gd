@@ -28,7 +28,6 @@ func update_camera_controller(delta: float) -> void:
 func _update_camera_rotation():
 	if not Input.get_mouse_mode() == Input.MOUSE_MODE_CAPTURED: return
 	
-	# Apply rotation directly to the local player and camera body
 	owner_player.rotate_y(-mouse_input.x * owner_player.look_sensitivity)
 	main_camera.rotate_x(-mouse_input.y * owner_player.look_sensitivity)
 	main_camera.rotation.x = clamp(main_camera.rotation.x, deg_to_rad(-90), deg_to_rad(90))

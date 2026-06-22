@@ -4,6 +4,7 @@ class_name Player extends CharacterBody3D
 
 @export_category("Controllers")
 @export var camera_controller : CameraController
+@export var input_handeler : InputHandeler
 
 @export_category("Components")
 @export var state_machine : StateMachine
@@ -20,6 +21,9 @@ class_name Player extends CharacterBody3D
 
 @export_category("Global movement variables")
 @export var local_gravity := 16.0
+@export var jump_power := 5.0
+@export var slide_boost_power := 5.0
+@export var slide_speed_threshold := 8.0
 
 @export_group("Ground")
 @export var walk_speed := 6.0
@@ -44,8 +48,10 @@ class_name Player extends CharacterBody3D
 @export var max_vertical_velocity := 100.0
 @export_range(1,2,.1) var falling_gravity_multiplier := 1.1
 @export var air_cap := 0.85
-@export var air_accel := 800.0
-@export var air_move_speed := 500.0
+@export var air_accel := 5.0
+@export var air_move_speed := 5.0
+@export var airstrafe_penalty_start := 7.0   # kicks in just before walk speed
+@export var airstrafe_penalty_exp := 4.0       # exponent, higher = harsher curve
 
 @onready var stairs_ahead_raycast: RayCast3D = %StairsAheadRayCast
 @onready var stairs_below_raycast: RayCast3D = %StairsBelowRayCast
@@ -61,8 +67,15 @@ var _last_frame_was_on_floor = -INF
 
 var current_speed : float = walk_speed
 
-var crouch_translate := 0.6
+var crouch_translate := 0.5
 var is_crouched := false
+var can_slide := true
+
+var jump_avalible := false
+var jump_buffer_running := false
+var coyote_timer_running := false
+
+
 
 var stamina := 1.0
 var is_depleted := false
@@ -85,6 +98,8 @@ func _ready() -> void:
 			camera_controller.setup_camera_controller(self)
 			state_machine.setup_state_machine(self)
 			Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
+			
+			input_handeler.jump_pressed.connect(start_jump_buffer)
 	else:
 		set_process(false)
 		set_physics_process(false)
@@ -164,24 +179,79 @@ func _handle_ground_physics(delta: float) -> void:
 	
 	friction(0.0, ground_friction, delta)
 	
+#
+#func _handle_air_physics(delta: float) -> void:
+	#var cur_speed_in_wish_dir = self.velocity.dot(wish_dir)
+	#var capped_speed = min((air_move_speed * wish_dir).length(), air_cap)
+#
+	#var add_speed_till_cap = capped_speed - cur_speed_in_wish_dir
+	#if add_speed_till_cap > 0:
+		#var accel_speed = air_accel * air_move_speed * delta # Usually is adding this one.
+		#accel_speed = min(accel_speed, add_speed_till_cap) 
+		#self.velocity += accel_speed * wish_dir
 
 func _handle_air_physics(delta: float) -> void:
 	var cur_speed_in_wish_dir = self.velocity.dot(wish_dir)
 	var capped_speed = min((air_move_speed * wish_dir).length(), air_cap)
-
 	var add_speed_till_cap = capped_speed - cur_speed_in_wish_dir
 	if add_speed_till_cap > 0:
-		var accel_speed = air_accel * air_move_speed * delta # Usually is adding this one.
-		accel_speed = min(accel_speed, add_speed_till_cap) 
+		# Calculate penalty based on horizontal speed
+		var flat_speed = Vector3(self.velocity.x, 0, self.velocity.z).length()
+		var excess = max(flat_speed - airstrafe_penalty_start, 0.0)
+		var penalty = 1.0 / (1.0 + pow(excess / airstrafe_penalty_start, airstrafe_penalty_exp))
+
+		var accel_speed = air_accel * air_move_speed * delta * penalty
+		accel_speed = min(accel_speed, add_speed_till_cap)
 		self.velocity += accel_speed * wish_dir
+
+################
+
+func _handle_jump():
+	if is_on_floor():
+		jump_avalible = true
+		
+		if jump_buffer_running:
+			jump()
+	
+	if Input.is_action_just_pressed("jump") and coyote_timer_running and jump_avalible:
+		jump()
+
+func jump() -> void:
+	jump_avalible = false
+	self.velocity.y = 0 
+	self.velocity.y += jump_power
+
+
+func start_jump_buffer():
+	if jump_buffer_running: return
+	
+	get_tree().create_timer(0.15).timeout.connect(_on_jump_buffer_timer_timeout)
+	jump_buffer_running = true
+	
+func start_coyote_timer():
+	if coyote_timer_running: return
+	
+	get_tree().create_timer(0.1).timeout.connect(_on_coyote_timer_timeout)
+	coyote_timer_running = true
+
+func _on_jump_buffer_timer_timeout() -> void:
+	jump_buffer_running = false
+	
+func _on_coyote_timer_timeout() -> void:
+	coyote_timer_running = false
+
 
 
 @onready var _original_capsule_height = %PlayerCollision.shape.height
 func _handle_crouch(delta) -> void:
-	camera_controller.head.position.y =  lerp(camera_controller.head.position.y, -crouch_translate if is_crouched else 0.0, 10.0 * delta)
+	camera_controller.head.position.y =  lerp(camera_controller.head.position.y, -crouch_translate if is_crouched else 0.0, 25.0 * delta)
 	%PlayerCollision.shape.height = _original_capsule_height - crouch_translate if is_crouched else _original_capsule_height
 	%PlayerCollision.position.y = %PlayerCollision.shape.height / 2
 
+func _can_uncrouch():
+	return not test_move(transform, Vector3(0,crouch_translate,0))
+
+##################################
 
 func fill_stamina(delta):
 	if not use_stamina:
@@ -225,7 +295,7 @@ func update_input(delta) -> void:
 	if is_on_floor(): _last_frame_was_on_floor = Engine.get_physics_frames()
 
 	# Read local inputs directly
-	input_dir = Input.get_vector("left", "right", "forward", "back").normalized()
+	input_dir = input_handeler.input_dir
 	wish_dir = self.global_transform.basis * Vector3(input_dir.x, 0., input_dir.y)
 
 	_handle_crouch(delta)
@@ -234,6 +304,8 @@ func update_input(delta) -> void:
 		_handle_ground_physics(delta)
 	else:
 		_handle_air_physics(delta)
+	
+	_handle_jump()
 	
 	
 func update_velocity(delta) -> void:

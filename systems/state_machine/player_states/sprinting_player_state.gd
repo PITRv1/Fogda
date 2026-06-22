@@ -3,6 +3,7 @@ class_name SprintingPlayerState extends PlayerState
 @export var idle_state : IdlePlayerState
 @export var inair_state : InAirPlayerState
 @export var walking_state : WalkingPlayerState
+@export var sliding_state : SlidingPlayerState
 
 
 func enter(_prev_state):
@@ -13,14 +14,14 @@ func update(_delta : float) -> void:
 	if owner_entity.velocity.length() <= 0:
 		transition.emit(idle_state)
 	
-	if not Global.game_manager.input_handeler.sprint_held:
+	if not owner_entity.input_handeler.sprint_held or not owner_entity.can_use_stamina():
 		transition.emit(walking_state)
 	
 	if not owner_entity.is_on_floor():
 		transition.emit(inair_state)
 
-	if not owner_entity.can_use_stamina():
-		transition.emit(walking_state)
+	if owner_entity.input_handeler.crouch_held and Vector3(owner_entity.velocity.x,0,owner_entity.velocity.y).length() > owner_entity.slide_speed_threshold and owner_entity.can_slide:
+		transition.emit(sliding_state)
 
 func physics_update(delta: float) -> void:
 	owner_entity.update_gravity(delta)

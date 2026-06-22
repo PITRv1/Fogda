@@ -2,6 +2,9 @@ class_name WalkingPlayerState extends PlayerState
 
 @export var idle_state : IdlePlayerState
 @export var inair_state : InAirPlayerState
+@export var crouching_state : CrouchingPlayerState
+@export var sprinting_state : SprintingPlayerState
+@export var sliding_state : SlidingPlayerState
 
 
 func enter(_prev_state):
@@ -15,21 +18,21 @@ func update(_delta : float) -> void:
 	if not owner_entity.is_on_floor():
 		transition.emit(inair_state)
 	
-	#if Global.game_manager.input_handeler.crouch_held:
-		#transition.emit(crouching_state)
-		#
-	#if Global.game_manager.input_handeler.sprint_held and owner_entity.can_use_stamina():
-		#transition.emit(sprinting_state)
-	#
-	#if Global.game_manager.input_handeler.noclip_just_pressed and OS.is_debug_build():
-		#transition.emit(noclip_state)
+	if owner_entity.input_handeler.crouch_held:
+		transition.emit(crouching_state)
+
+	if owner_entity.input_handeler.sprint_held and owner_entity.can_use_stamina():
+		transition.emit(sprinting_state)
+
+	if owner_entity.input_handeler.crouch_held and Vector3(owner_entity.velocity.x,0,owner_entity.velocity.y).length() > owner_entity.slide_speed_threshold and owner_entity.can_slide:
+		transition.emit(sliding_state)
+
 
 func physics_update(delta: float) -> void:
 	owner_entity.update_gravity(delta)
 	owner_entity.update_input(delta)
 	owner_entity.update_velocity(delta)
 	
-	#if owner_entity.is_multiplayer_authority():
-		#owner_entity.camera_controller.headbob_effect(delta)
+	owner_entity.camera_controller.headbob_effect(delta)
 	
 	owner_entity.fill_stamina(delta)
