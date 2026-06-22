@@ -71,7 +71,6 @@ var is_dead : bool = false
 
 
 func _enter_tree() -> void:
-	set_multiplayer_authority(name.to_int())
 	%InputSynchronizer.set_multiplayer_authority(name.to_int())
 	add_to_group("players")
 
@@ -81,27 +80,30 @@ func _ready() -> void:
 	  " authority: ", get_multiplayer_authority(),
 	  " position: ", global_position)
 	
+	var is_local_player := name.to_int() == multiplayer.get_unique_id()
+	
 	if dummy:
 		set_process(false)
 		set_physics_process(false)
 		state_machine.disabled = true
 		return
 	
-	if is_multiplayer_authority():
+	if is_local_player:
 		camera_controller.setup_camera_controller(self)
-		state_machine.setup_state_machine(self)
 		Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
 		
-	elif multiplayer.is_server():
+	if multiplayer.is_server():
 		state_machine.setup_state_machine(self)
 	else:
-		set_process(false)
-		set_physics_process(false)
 		state_machine.disabled = true
+	
+
 
 
 func _physics_process(delta: float) -> void:
-	if is_multiplayer_authority():
+	var is_local_player := name.to_int() == multiplayer.get_unique_id()
+	
+	if is_local_player:
 		camera_controller.update_camera_controller(delta)
 
 ######################################################
