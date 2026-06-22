@@ -71,6 +71,7 @@ var is_dead : bool = false
 
 
 func _enter_tree() -> void:
+	
 	%InputSynchronizer.set_multiplayer_authority(name.to_int())
 	add_to_group("players")
 
