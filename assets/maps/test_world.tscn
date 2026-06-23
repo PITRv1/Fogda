@@ -4,7 +4,6 @@
 [ext_resource type="Texture2D" uid="uid://c50peciqjblae" path="res://assets/hdr/galaxy.hdr" id="1_8opph"]
 [ext_resource type="Resource" uid="uid://bkhxcqsquw1yg" path="res://addons/func_godot/func_godot_default_map_settings.tres" id="2_8opph"]
 [ext_resource type="Material" uid="uid://dmbouud20kb5y" path="res://assets/textures/normal/tex_concrete_1.tres" id="4_8opph"]
-[ext_resource type="PackedScene" uid="uid://v6njfv4epi7j" path="res://player/player.tscn" id="5_osk4f"]
 
 [sub_resource type="PanoramaSkyMaterial" id="PanoramaSkyMaterial_osk4f"]
 panorama = ExtResource("1_8opph")
@@ -182,7 +181,3 @@ shape = SubResource("ConvexPolygonShape3D_ppcfd")
 
 [node name="entity_0_brush_19_collision_shape" type="CollisionShape3D" parent="Env/FuncGodotMap/entity_0_worldspawn" unique_id=858212456]
 shape = SubResource("ConvexPolygonShape3D_ckdjk")
-
-[node name="Player" parent="Env" unique_id=1187813961 instance=ExtResource("5_osk4f")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.1920929e-07, 3.304894)
-dummy = true
