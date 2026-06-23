@@ -10,6 +10,7 @@
 [ext_resource type="Script" uid="uid://dg1pe1p1vmu41" path="res://systems/state_machine/player_states/crouching_player_state.gd" id="8_hg6s5"]
 [ext_resource type="Script" uid="uid://bswk8sqbocga0" path="res://player/input_handeler.gd" id="8_rgyib"]
 [ext_resource type="Script" uid="uid://drkbk8s8k6q32" path="res://systems/state_machine/player_states/sliding_player_state.gd" id="9_8t03j"]
+[ext_resource type="PackedScene" uid="uid://rkedb466u1l6" path="res://systems/tag_system/tag_component.tscn" id="11_2ieo8"]
 
 [sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_oul6g"]
 properties/0/path = NodePath(".:position")
@@ -24,17 +25,17 @@ height = 1.7387695
 
 [sub_resource type="CapsuleMesh" id="CapsuleMesh_g1dw6"]
 
-[node name="Player" type="CharacterBody3D" unique_id=1187813961 node_paths=PackedStringArray("camera_controller", "input_handeler", "state_machine")]
+[node name="Player" type="CharacterBody3D" unique_id=1187813961 node_paths=PackedStringArray("camera_controller", "input_handeler", "state_machine", "tag_component")]
 script = ExtResource("1_oul6g")
 camera_controller = NodePath("CameraController")
 input_handeler = NodePath("InputHandeler")
 state_machine = NodePath("StateMachine")
+tag_component = NodePath("TagComponent")
 look_sensitivity = 0.0011
 walk_speed = 5.0
 sprint_speed = 7.5
 crouch_speed = 4.0
 ground_accel = 40.0
-slide_speed_threshold = 4.0
 vel_cam_allignment_allowed_deviation = 0.9
 use_stamina = false
 
@@ -48,7 +49,6 @@ shape = SubResource("CapsuleShape3D_hg6s5")
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="." unique_id=1463840154]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
-visible = false
 mesh = SubResource("CapsuleMesh_g1dw6")
 
 [node name="HeadAnchor" type="Marker3D" parent="." unique_id=1721222122]
@@ -63,6 +63,7 @@ unique_name_in_owner = true
 
 [node name="Camera" type="Camera3D" parent="CameraController/Head" unique_id=1825404127]
 unique_name_in_owner = true
+fov = 95.0
 
 [node name="StairsBelowRayCast" type="RayCast3D" parent="." unique_id=185514709]
 unique_name_in_owner = true
@@ -117,3 +118,5 @@ walking_state = NodePath("../WalkingState")
 [node name="InputHandeler" type="Node" parent="." unique_id=1253015289]
 script = ExtResource("8_rgyib")
 invert_sprint = true
+
+[node name="TagComponent" parent="." unique_id=1432970655 instance=ExtResource("11_2ieo8")]
