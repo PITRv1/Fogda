@@ -98,9 +98,10 @@ func _ready() -> void:
 		return
 	
 	if is_multiplayer_authority():
-		camera_controller.setup_camera_controller(self)
-		state_machine.setup_state_machine(self)
-		input_handeler.owner_player = self
+		camera_controller.setup(self)
+		state_machine.setup(self)
+		input_handeler.setup(self)
+		tag_component.setup(self)
 		
 		var rnd_x = randf_range(-5,5)
 		var rnd_z = randf_range(-5,5)
@@ -109,7 +110,7 @@ func _ready() -> void:
 		Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
 		
 		input_handeler.jump_pressed.connect(start_jump_buffer)
-		input_handeler.m_left_clicked.connect(attempt_tag)
+		input_handeler.m_left_clicked.connect(hit)
 	else:
 		set_process(false)
 		set_physics_process(false)
@@ -254,10 +255,10 @@ func _can_uncrouch():
 func _is_velocity_aligned_with_camera():
 	var desire_direction = -camera_controller.main_camera.global_transform.basis.z
 	
-	#var flat_vel_dir = Vector3(velocity.x, 0, velocity.z).normalized()
 	var flat_desire_dir = Vector3(desire_direction.x,0,desire_direction.y).normalized()
 	
 	return 1.0 - vel_cam_allignment_allowed_deviation < clampf(flat_desire_dir.dot(wish_dir),-1,1)
+
 
 ##################################
 
@@ -287,7 +288,6 @@ func depleat_stamina(delta):
 
 func can_use_stamina() -> bool:
 	return not is_depleted
-	
 	
 ####################################################
 
@@ -325,53 +325,20 @@ func update_velocity(delta) -> void:
 		snap_down_to_stairs_check()
 
 
-
-func attempt_tag():
+func hit():
 	if not is_multiplayer_authority(): return
+
+	var reach = 5.0
+	var target_pos = camera_controller.main_camera.global_position - camera_controller.main_camera.global_transform.basis.z * reach
+	var result : Dictionary = Global.query_space(self, camera_controller.main_camera.global_position, target_pos)
 	
-	var query_result = query_space_for_tag()
-	if !query_result: return
-	var collider : Node3D = query_result.collider
+	if !result: return
+	var collider : Node3D = result.collider
 	
 	if collider is Player:
 		var target_peer_id = collider.get_multiplayer_authority()
-		server_process_tag_attempt.rpc_id(1, target_peer_id)
-
-func query_space_for_tag() -> Dictionary:
-	var space_state = get_world_3d().direct_space_state
-	var camera = camera_controller.main_camera
-	var distance = 10.0
-
-	var query = PhysicsRayQueryParameters3D.create(
-		camera.global_position,
-		camera.global_position - camera.global_transform.basis.z * distance
-	)
-	
-	return space_state.intersect_ray(query)
-
-@rpc("any_peer", "reliable", "call_local")
-func server_process_tag_attempt(target_id : int):
-	if not multiplayer.is_server(): return
-	
-	var tagger_id := multiplayer.get_remote_sender_id()
-	var players := get_tree().get_nodes_in_group("players")
-	
-	var target_player : Player = players[players.find_custom(func(item): return item.name == str(target_id))]
-	
-	if target_player:
-		client_tag_confirmed.rpc_id(tagger_id, target_id)
-		client_you_were_tagged.rpc_id(target_id, tagger_id)
-	
-@rpc("any_peer", "reliable", "call_local")
-func client_tag_confirmed(target_id: int) -> void:
-	if not multiplayer.is_server() and multiplayer.get_remote_sender_id() != 1: 
-		return
-	print("Server confirmed: You successfully tagged Player ", target_id)
-	# Play local hitmarker audio, visual crosshair changes, etc.
-
-@rpc("any_peer", "reliable", "call_local")
-func client_you_were_tagged(tagger_id: int) -> void:
-	if not multiplayer.is_server() and multiplayer.get_remote_sender_id() != 1: 
-		return
 		
-	print("Server warning: You were tagged by Player ", tagger_id)
+		Global.server_process_hit_attempt.rpc_id(1, target_peer_id)
+		
+	else:
+		print("I hate the floor")

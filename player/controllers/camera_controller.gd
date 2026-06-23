@@ -1,9 +1,9 @@
-class_name CameraController extends Node3D
+class_name CameraController extends NetworkOwnedObj
 
 @export var camera_controller_anchor: Marker3D 
 
-@onready var main_camera: Camera3D = %Camera
-@onready var head: Node3D = $Head
+@export var head: Node3D
+@export var main_camera: Camera3D
 
 var owner_player : Player
 var mouse_input := Vector2.ZERO
@@ -13,9 +13,10 @@ func _input(event: InputEvent) -> void:
 	if event is InputEventMouseMotion:
 		mouse_input = event.relative
 
-func setup_camera_controller(owner_entity : Player):
-	owner_player = owner_entity
+func setup(base_owner : Node):
+	owner_player = base_owner
 	main_camera.make_current()
+
 
 func update_camera_controller(delta: float) -> void:
 	if owner_player == null: return

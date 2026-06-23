@@ -1,6 +1,5 @@
 class_name StateMachine
-
-extends Node
+extends NetworkOwnedObj
 
 @export var CURRENT_STATE : State
 var states : Dictionary[String, State] = {}
@@ -34,10 +33,11 @@ func _process(delta):
 func _physics_process(delta):
 	CURRENT_STATE.physics_update(delta)
 
-
-func setup_state_machine(state_machine_owner):
+func setup(state_machine_owner : Node):
+	owner_entity = state_machine_owner
+	
 	for state : State in states.values():
-		state.state_owner = state_machine_owner
+		state.state_owner = owner_entity
 
 func on_child_transition(new_state: State)->void:
 	#var new_state = states.get(new_state_name.to_lower())

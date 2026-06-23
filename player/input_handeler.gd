@@ -1,4 +1,4 @@
-class_name InputHandeler extends Node
+class_name InputHandeler extends NetworkOwnedObj
 
 signal jump_pressed
 signal m_left_clicked
@@ -10,11 +10,9 @@ var input_dir := Vector2.ZERO
 var crouch_held : bool = false
 var sprint_held : bool = false
 
-var owner_player : Player
-
 func _physics_process(_delta: float) -> void:
-	if owner_player == null : return
-	if !owner_player.is_multiplayer_authority(): return
+	if owner_entity == null : return
+	if !owner_entity.is_multiplayer_authority(): return
 	
 	input_dir = Input.get_vector("left", "right", "forward", "back").normalized()
 	

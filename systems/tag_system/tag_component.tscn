@@ -2,5 +2,5 @@
 
 [ext_resource type="Script" uid="uid://ctu44btismxk1" path="res://systems/tag_system/tag_component.gd" id="1_o5sm1"]
 
-[node name="TagComponent" type="Node3D" unique_id=1432970655]
+[node name="TagComponent" type="Node" unique_id=88909780]
 script = ExtResource("1_o5sm1")

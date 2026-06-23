@@ -54,9 +54,18 @@ mesh = SubResource("CapsuleMesh_g1dw6")
 [node name="HeadAnchor" type="Marker3D" parent="." unique_id=1721222122]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.2969189, 0)
 
-[node name="CameraController" type="Node3D" parent="." unique_id=2110311610 node_paths=PackedStringArray("camera_controller_anchor")]
+[node name="StairsBelowRayCast" type="RayCast3D" parent="." unique_id=185514709]
+unique_name_in_owner = true
+
+[node name="StairsAheadRayCast" type="RayCast3D" parent="." unique_id=1760184447]
+unique_name_in_owner = true
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.517, -0.733)
+
+[node name="CameraController" type="Node3D" parent="." unique_id=2110311610 node_paths=PackedStringArray("camera_controller_anchor", "head", "main_camera")]
 script = ExtResource("2_rkbax")
 camera_controller_anchor = NodePath("../HeadAnchor")
+head = NodePath("Head")
+main_camera = NodePath("Head/Camera")
 
 [node name="Head" type="Node3D" parent="CameraController" unique_id=371706036]
 unique_name_in_owner = true
@@ -64,13 +73,6 @@ unique_name_in_owner = true
 [node name="Camera" type="Camera3D" parent="CameraController/Head" unique_id=1825404127]
 unique_name_in_owner = true
 fov = 95.0
-
-[node name="StairsBelowRayCast" type="RayCast3D" parent="." unique_id=185514709]
-unique_name_in_owner = true
-
-[node name="StairsAheadRayCast" type="RayCast3D" parent="." unique_id=1760184447]
-unique_name_in_owner = true
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.517, -0.733)
 
 [node name="StateMachine" type="Node" parent="." unique_id=2042917096 node_paths=PackedStringArray("CURRENT_STATE")]
 script = ExtResource("3_g1dw6")
@@ -120,3 +122,4 @@ script = ExtResource("8_rgyib")
 invert_sprint = true
 
 [node name="TagComponent" parent="." unique_id=1432970655 instance=ExtResource("11_2ieo8")]
+tagged = true
