@@ -10,9 +10,13 @@ func server_process_hit_attempt(target_id : int):
 	
 	var tagger_player : Player = get_player_by_id(tagger_id)
 	var target_player : Player = get_player_by_id(target_id)
+	print("do we even get here?")
 	
 	if target_player:
+		print("found target_player")
+		
 		if tagger_player.tag_component.tagged:
+			print("what?")
 			if not target_player.tag_component.tagged:
 				print("dow we get here?")
 				
