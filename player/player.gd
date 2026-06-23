@@ -337,11 +337,7 @@ func hit():
 	
 	
 	if collider is Player:
-		
-		print('where do we sto[p]')
-		
 		var target_peer_id = collider.get_multiplayer_authority()
-		
 		Global.server_process_hit_attempt.rpc_id(1, target_peer_id)
 		
 	else:

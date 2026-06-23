@@ -4,12 +4,18 @@ var game_manager : GameManager
 
 @rpc("any_peer", "reliable", "call_local")
 func server_process_hit_attempt(target_id : int):
+	print("this is not happening on the server but was called ig")
+	
 	if not multiplayer.is_server(): return
 	
 	var tagger_id := multiplayer.get_remote_sender_id()
 	
 	var tagger_player : Player = get_player_by_id(tagger_id)
 	var target_player : Player = get_player_by_id(target_id)
+	if tagger_player == null or target_player == null: 
+		push_error("Either the tagger player or the target player can not be found")
+		return 
+	
 	print("do we even get here?")
 	
 	if target_player:
@@ -43,7 +49,14 @@ func client_you_were_tagged(tagged_id : int,tagger_id: int) -> void:
 	
 func get_player_by_id(id : int) -> Player:
 	var players := get_tree().get_nodes_in_group("players")
-	return players[players.find_custom(func(item): return item.name == str(id))]
+	var player_index : int = players.find_custom(func(item): return item.name == str(id))
+	
+	if player_index == -1:
+		return null
+	
+	var player : Player = players[player_index]
+	return player
+
 
 func query_space(on_this_node : Node3D, from : Vector3, to : Vector3) -> Dictionary:
 	var space_state = on_this_node.get_world_3d().direct_space_state
