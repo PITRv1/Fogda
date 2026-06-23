@@ -27,7 +27,7 @@ func enter(_prev_state)->void:
 	
 	var new_boost = owner_entity.slide_boost_power + owner_entity.slide_boost_power * boost_flipped
 	
-	owner_entity.velocity += Vector3(boost_dir.x,0,boost_dir.y) * new_boost
+	owner_entity.velocity += boost_dir * new_boost
 	
 	owner_entity.is_crouched = true
 	owner_entity.side_sway_on = false
@@ -52,22 +52,8 @@ func update(_delta: float)->void:
 	if not owner_entity.input_handeler.crouch_held and owner_entity._can_uncrouch():
 		transition.emit(idle_state)
 
-	
-	#
-	#if Global.player.get_floor_angle(Vector3.UP) == 0.0 and Global.player.get_floor_angle(Vector3.UP) < Global.player.floor_max_angle :
-		#transition.emit(walking_state)
-		#
-	#if not Global.player.is_on_floor(): 
-		#transition.emit(inair_state)
-	#
-	#if not Global.player.player_input_bus.is_crouching:
-		#transition.emit(inair_state)
-
 func physics_update(delta: float)->void:
 	owner_entity.update_gravity(delta)
 	owner_entity.update_input(delta)
-	
-	#Global.player.velocity.x = lerp(Global.player.velocity.x, desire_direction.x * Global.player.sliding_speed + Global.player.wish_dir.x * Global.player.deviation_power, delta * ((Global.player.get_floor_angle(Vector3.UP) + 1)))
-	#Global.player.velocity.z = lerp(Global.player.velocity.z, desire_direction.z * Global.player.sliding_speed + Global.player.wish_dir.z * Global.player.deviation_power, delta * ((Global.player.get_floor_angle(Vector3.UP) + 1)))
-	#
+
 	owner_entity.update_velocity(delta)

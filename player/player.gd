@@ -101,6 +101,11 @@ func _ready() -> void:
 		camera_controller.setup_camera_controller(self)
 		state_machine.setup_state_machine(self)
 		input_handeler.owner_player = self
+		
+		var rnd_x = randf_range(-5,5)
+		var rnd_z = randf_range(-5,5)
+		self.global_position = Vector3(rnd_x, 2, rnd_z)
+		
 		Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
 		
 		input_handeler.jump_pressed.connect(start_jump_buffer)
