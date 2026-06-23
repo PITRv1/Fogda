@@ -57,7 +57,11 @@ func add_player(id : int = 1):
 	
 	var player = GlobalAssets.PLAYER.instantiate()
 	player.name = str(id)
-	player.position = Vector3(0, 2, 0)
+	
+	var rnd_x = randf_range(-5,5)
+	var rnd_z = randf_range(-5,5)
+	
+	player.position = Vector3(rnd_x, 2, rnd_z)
 	Global.game_manager.world_conatiner.add_child.call_deferred(player, true)
 
 func remove_player(id : int):

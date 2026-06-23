@@ -357,12 +357,16 @@ func server_process_tag_attempt(target_id : int):
 		client_tag_confirmed.rpc_id(tagger_id, target_id)
 		client_you_were_tagged.rpc_id(target_id, tagger_id)
 	
-@rpc("authority", "reliable", "call_local")
+@rpc("any_peer", "reliable", "call_local")
 func client_tag_confirmed(target_id: int) -> void:
+	if not multiplayer.is_server() and multiplayer.get_remote_sender_id() != 1: 
+		return
 	print("Server confirmed: You successfully tagged Player ", target_id)
 	# Play local hitmarker audio, visual crosshair changes, etc.
 
-
-@rpc("authority", "reliable", "call_local")
+@rpc("any_peer", "reliable", "call_local")
 func client_you_were_tagged(tagger_id: int) -> void:
+	if not multiplayer.is_server() and multiplayer.get_remote_sender_id() != 1: 
+		return
+		
 	print("Server warning: You were tagged by Player ", tagger_id)
