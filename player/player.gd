@@ -87,6 +87,10 @@ var is_dead : bool = false
 
 
 func _enter_tree() -> void:
+	if dummy: 
+		push_warning("A dummy exists on the server on id: 9999")
+		self.name = str(9999)
+	
 	set_multiplayer_authority(name.to_int())
 	add_to_group("players")
 

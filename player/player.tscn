@@ -125,3 +125,4 @@ script = ExtResource("8_rgyib")
 invert_sprint = true
 
 [node name="TagComponent" parent="." unique_id=1432970655 instance=ExtResource("11_2ieo8")]
+tagged = true

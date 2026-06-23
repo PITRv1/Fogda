@@ -4,8 +4,6 @@ var game_manager : GameManager
 
 @rpc("any_peer", "reliable", "call_local")
 func server_process_hit_attempt(target_id : int):
-	print("this is not happening on the server but was called ig")
-	
 	if not multiplayer.is_server(): return
 	
 	var tagger_id := multiplayer.get_remote_sender_id()
@@ -16,19 +14,13 @@ func server_process_hit_attempt(target_id : int):
 		push_error("Either the tagger player or the target player can not be found")
 		return 
 	
-	print("do we even get here?")
-	
 	if target_player:
-		print("found target_player")
-		
 		if tagger_player.tag_component.tagged:
-			print("what?")
 			if not target_player.tag_component.tagged:
-				print("dow we get here?")
 				
 				client_tag_confirmed.rpc_id(tagger_id, tagger_id, target_id)
 				client_you_were_tagged.rpc_id(target_id, target_id, tagger_id)
-	# TODO : Implament Normal hit mechanics and optimize this "if" hellscape
+	# TODO : Implament Normal hit mechanics and optimize this "if" hellscape c
 
 
 @rpc("any_peer", "reliable", "call_local")
