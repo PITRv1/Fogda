@@ -18,26 +18,36 @@ func server_process_hit_attempt(target_id : int):
 		if tagger_player.tag_component.tagged:
 			if not target_player.tag_component.tagged:
 				
-				client_tag_confirmed.rpc_id(tagger_id, tagger_id, target_id)
-				client_you_were_tagged.rpc_id(target_id, target_id, tagger_id)
+				client_hit_confirmed.rpc_id(tagger_id, tagger_id, target_id, true)
+				client_you_were_hit.rpc_id(target_id, target_id, tagger_id, true)
+		else:
+			client_hit_confirmed.rpc_id(tagger_id, tagger_id, target_id, false)
+			client_you_were_hit.rpc_id(target_id, target_id, tagger_id, false)
+			
 	# TODO : Implament Normal hit mechanics and optimize this "if" hellscape c
 
 
 @rpc("any_peer", "reliable", "call_local")
-func client_tag_confirmed(tagger_id : int, tagged_id: int) -> void:
+func client_hit_confirmed(tagger_id : int, tagged_id: int, tag_happened : bool) -> void:
 	if not multiplayer.is_server() and multiplayer.get_remote_sender_id() != 1: 
 		return
+	
+	if tag_happened:
+		get_player_by_id(tagger_id).tag_component.tagged_other(tagged_id)
+	else:
+		get_player_by_id(tagger_id).tag_component.hit_other(tagged_id)
 		
-	get_player_by_id(tagger_id).tag_component.tagged_other(tagged_id)
-
 
 @rpc("any_peer", "reliable", "call_local")
-func client_you_were_tagged(tagged_id : int,tagger_id: int) -> void:
+func client_you_were_hit(tagged_id : int,tagger_id: int, tag_happened : bool) -> void:
 	if not multiplayer.is_server() and multiplayer.get_remote_sender_id() != 1: 
 		return
 	
-	get_player_by_id(tagged_id).tag_component.receive_tag(tagger_id)
-	
+	if tag_happened:
+		get_player_by_id(tagged_id).tag_component.receive_tag(tagger_id)
+	else:
+		get_player_by_id(tagged_id).tag_component.receive_hit(tagger_id)
+
 	
 func get_player_by_id(id : int) -> Player:
 	var players := get_tree().get_nodes_in_group("players")
