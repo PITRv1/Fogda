@@ -19,6 +19,7 @@ func setup(base_owner : Node):
 func tagged_other(tagged_player_id : int):
 	if not owner_player.is_multiplayer_authority(): return
 	tagged = false
+	
 	print("tagged some1")
 	
 	hit_other(tagged_player_id)

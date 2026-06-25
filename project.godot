@@ -21,6 +21,11 @@ Network="*uid://lm4ilj1f5b6w"
 GlobalAssets="*uid://wf4tkh0n18a5"
 Global="*uid://c2ix6i6cebg1j"
 
+[display]
+
+window/size/viewport_width=1920
+window/size/viewport_height=1080
+
 [editor_plugins]
 
 enabled=PackedStringArray("res://addons/func_godot/plugin.cfg", "res://addons/godotsteam/plugin.cfg", "res://addons/project-time-tracker/plugin.cfg")

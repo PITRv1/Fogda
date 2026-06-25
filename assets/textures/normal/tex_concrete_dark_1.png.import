@@ -2,8 +2,8 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://etvvld3phrs8"
-path.s3tc="res://.godot/imported/clip.png-a7cac77780ceed0fee935df52a43ee26.s3tc.ctex"
+uid="uid://cp1n3wsy6f22m"
+path.s3tc="res://.godot/imported/tex_concrete_dark_1.png-ab6217984cc842cce2ccb9a646ce7a1c.s3tc.ctex"
 metadata={
 "imported_formats": ["s3tc_bptc"],
 "vram_texture": true
@@ -11,8 +11,8 @@ metadata={
 
 [deps]
 
-source_file="res://assets/textures/special/clip.png"
-dest_files=["res://.godot/imported/clip.png-a7cac77780ceed0fee935df52a43ee26.s3tc.ctex"]
+source_file="res://assets/textures/normal/tex_concrete_dark_1.png"
+dest_files=["res://.godot/imported/tex_concrete_dark_1.png-ab6217984cc842cce2ccb9a646ce7a1c.s3tc.ctex"]
 
 [params]
 

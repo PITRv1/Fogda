@@ -2,8 +2,8 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://etvvld3phrs8"
-path.s3tc="res://.godot/imported/clip.png-a7cac77780ceed0fee935df52a43ee26.s3tc.ctex"
+uid="uid://cf5gclx8nxlgv"
+path.s3tc="res://.godot/imported/tex_glass.png-21c498cff4c8216067f4424ad899f6ad.s3tc.ctex"
 metadata={
 "imported_formats": ["s3tc_bptc"],
 "vram_texture": true
@@ -11,8 +11,8 @@ metadata={
 
 [deps]
 
-source_file="res://assets/textures/special/clip.png"
-dest_files=["res://.godot/imported/clip.png-a7cac77780ceed0fee935df52a43ee26.s3tc.ctex"]
+source_file="res://assets/textures/normal/tex_glass.png"
+dest_files=["res://.godot/imported/tex_glass.png-21c498cff4c8216067f4424ad899f6ad.s3tc.ctex"]
 
 [params]
 

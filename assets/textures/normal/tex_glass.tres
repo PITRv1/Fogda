@@ -1,0 +1,18 @@
+[gd_resource type="ShaderMaterial" format=3 uid="uid://bx04cexdybn0u"]
+
+[ext_resource type="Shader" uid="uid://b5oigq0vx3ijg" path="res://assets/mats/glass_shader.gdshader" id="1_yx8rv"]
+
+[resource]
+render_priority = 0
+shader = ExtResource("1_yx8rv")
+shader_parameter/color = Color(1, 1, 1, 1)
+shader_parameter/color_coat = 0.0
+shader_parameter/oilyness = 0.47999998927104
+shader_parameter/rim_amount = 0.02999999932944
+shader_parameter/rim_shape = 5.99999986961332
+shader_parameter/rim_color = Color(1, 1, 1, 1)
+shader_parameter/roughness = 0.2
+shader_parameter/specular = 0.8
+shader_parameter/refraction_strength = 0.0499999765304
+shader_parameter/scatter_strength = 0.5000000074506
+shader_parameter/tile_size = Vector2(10, 10)

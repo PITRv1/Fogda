@@ -330,9 +330,10 @@ func update_velocity(delta) -> void:
 		move_and_slide()
 		snap_down_to_stairs_check()
 
-
+var hit_cooldown : bool = false
 func hit():
 	if not is_multiplayer_authority(): return
+	if hit_cooldown : return
 
 	var reach = 5.0
 	var target_pos = camera_controller.main_camera.global_position - camera_controller.main_camera.global_transform.basis.z * reach
@@ -343,7 +344,6 @@ func hit():
 	
 	
 	if collider is Player:
-		
 		# Bypass the normal server logic for testdummy cause it wont work otherwise
 		if collider.dummy:
 			if self.tag_component.tagged:
@@ -356,4 +356,8 @@ func hit():
 		Global.server_process_hit_attempt.rpc_id(1, target_peer_id)
 		
 	else:
-		print("I hate the floor")
+		velocity += self.camera_controller.main_camera.global_transform.basis.z * self.tag_component.hit_power
+	
+	hit_cooldown = true
+	get_tree().create_timer(1.0).timeout.connect(func(): hit_cooldown = false)
+	
