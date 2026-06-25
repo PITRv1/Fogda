@@ -1,10 +1,13 @@
 class_name TagComponent extends NetworkOwnedObj
 
-signal tag_recieved
-signal tag_given
+signal tagged_changed(new_state : bool)
 
 @export var hit_power : float = 10.0
-@export var tagged : bool = false
+@export var tagged : bool = false : 
+	set(value):
+		tagged = value
+		tagged_changed.emit(tagged)
+
 var owner_player : Player
 
 
@@ -15,18 +18,15 @@ func tagged_other(tagged_player_id : int):
 	if not owner_player.is_multiplayer_authority(): return
 	
 	print("Tagged Player #", tagged_player_id)
-	tagged = false
-	owner_player.visual_controller.set_outline_state(false)
 	
-	tag_given.emit()
+	tagged = false
+	
 
 func receive_tag(tagger_player_id : int):
 	if not owner_player.is_multiplayer_authority() and !owner_player.dummy: return
 		
 	print("Tagged by Player #", tagger_player_id)
 	tagged = true
-	tag_recieved.emit()
-	owner_player.visual_controller.set_outline_state(true)
 	
 	receive_hit(tagger_player_id)
 

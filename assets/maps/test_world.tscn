@@ -4,18 +4,6 @@
 [ext_resource type="Texture2D" uid="uid://c50peciqjblae" path="res://assets/hdr/galaxy.hdr" id="1_8opph"]
 [ext_resource type="Resource" uid="uid://bkhxcqsquw1yg" path="res://addons/func_godot/func_godot_default_map_settings.tres" id="2_8opph"]
 [ext_resource type="Material" uid="uid://dmbouud20kb5y" path="res://assets/textures/normal/tex_concrete_1.tres" id="4_8opph"]
-[ext_resource type="Script" uid="uid://dbtelqo3qsbqc" path="res://player/player.gd" id="5_hmy7w"]
-[ext_resource type="Script" uid="uid://c2vvv4qf26qv7" path="res://player/controllers/camera_controller.gd" id="6_iqnyd"]
-[ext_resource type="Script" uid="uid://l3or1dk7h4r4" path="res://player/visual_controller.gd" id="6_pimt4"]
-[ext_resource type="Script" uid="uid://d2174cxqjfead" path="res://systems/state_machine/state_machine.gd" id="7_pimt4"]
-[ext_resource type="Script" uid="uid://hd1lmwh1hh2k" path="res://systems/state_machine/player_states/idle_player_state.gd" id="8_hydoe"]
-[ext_resource type="Script" uid="uid://cfjh5ufvlfb7w" path="res://systems/state_machine/player_states/walking_player_state.gd" id="9_wcpln"]
-[ext_resource type="Script" uid="uid://dh5wraa7052n3" path="res://systems/state_machine/player_states/inair_player_state.gd" id="10_tfkjo"]
-[ext_resource type="Script" uid="uid://be5dhjq8ervsy" path="res://systems/state_machine/player_states/sprinting_player_state.gd" id="11_8qyhm"]
-[ext_resource type="Script" uid="uid://dg1pe1p1vmu41" path="res://systems/state_machine/player_states/crouching_player_state.gd" id="12_ph7ql"]
-[ext_resource type="Script" uid="uid://drkbk8s8k6q32" path="res://systems/state_machine/player_states/sliding_player_state.gd" id="13_ppcfd"]
-[ext_resource type="Script" uid="uid://bswk8sqbocga0" path="res://player/input_handeler.gd" id="14_ckdjk"]
-[ext_resource type="PackedScene" uid="uid://rkedb466u1l6" path="res://systems/tag_system/tag_component.tscn" id="15_x07jy"]
 
 [sub_resource type="PanoramaSkyMaterial" id="PanoramaSkyMaterial_osk4f"]
 panorama = ExtResource("1_8opph")
@@ -111,22 +99,6 @@ points = PackedVector3Array(-99.5, 2, 13, -99.5, 0, 13, -100, 2, 13, -100, 0, 13
 [sub_resource type="ConvexPolygonShape3D" id="ConvexPolygonShape3D_ckdjk"]
 points = PackedVector3Array(-99.5, 2, 2.5, -99.5, 0, 2.5, -100, 2, 2.5, -100, 0, 2.5, -99.5, 2, -11.5, -99.5, 0, -11.5, -100, 2, -11.5, -100, 0, -11.5)
 
-[sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_oul6g"]
-properties/0/path = NodePath(".:position")
-properties/0/spawn = true
-properties/0/replication_mode = 1
-properties/1/path = NodePath(".:rotation")
-properties/1/spawn = true
-properties/1/replication_mode = 1
-properties/2/path = NodePath("TagComponent:tagged")
-properties/2/spawn = true
-properties/2/replication_mode = 1
-
-[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_hg6s5"]
-height = 1.7387695
-
-[sub_resource type="CapsuleMesh" id="CapsuleMesh_g1dw6"]
-
 [node name="TestWorld" type="Node3D" unique_id=810854495]
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=1578159785]
@@ -209,108 +181,3 @@ shape = SubResource("ConvexPolygonShape3D_ppcfd")
 
 [node name="entity_0_brush_19_collision_shape" type="CollisionShape3D" parent="Env/FuncGodotMap/entity_0_worldspawn" unique_id=808965583]
 shape = SubResource("ConvexPolygonShape3D_ckdjk")
-
-[node name="Player" type="CharacterBody3D" parent="Env" unique_id=1187813961 node_paths=PackedStringArray("camera_controller", "input_handeler", "visual_controller", "state_machine", "tag_component")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 2.9476457)
-script = ExtResource("5_hmy7w")
-dummy = true
-camera_controller = NodePath("CameraController")
-input_handeler = NodePath("InputHandeler")
-visual_controller = NodePath("Visuals")
-state_machine = NodePath("StateMachine")
-tag_component = NodePath("TagComponent")
-look_sensitivity = 0.0011
-walk_speed = 5.0
-sprint_speed = 6.0
-crouch_speed = 4.0
-ground_accel = 40.0
-vel_cam_allignment_allowed_deviation = 0.9
-use_stamina = false
-
-[node name="MultiplayerSynchronizer" type="MultiplayerSynchronizer" parent="Env/Player" unique_id=295242381]
-replication_config = SubResource("SceneReplicationConfig_oul6g")
-
-[node name="PlayerCollision" type="CollisionShape3D" parent="Env/Player" unique_id=882957781]
-unique_name_in_owner = true
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.86938477, 0)
-shape = SubResource("CapsuleShape3D_hg6s5")
-
-[node name="HeadAnchor" type="Marker3D" parent="Env/Player" unique_id=1721222122]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.2969189, 0)
-
-[node name="StairsBelowRayCast" type="RayCast3D" parent="Env/Player" unique_id=185514709]
-unique_name_in_owner = true
-
-[node name="StairsAheadRayCast" type="RayCast3D" parent="Env/Player" unique_id=1760184447]
-unique_name_in_owner = true
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.517, -0.733)
-
-[node name="Visuals" type="Node3D" parent="Env/Player" unique_id=30590060 node_paths=PackedStringArray("mesh")]
-script = ExtResource("6_pimt4")
-mesh = NodePath("MeshInstance3D")
-
-[node name="MeshInstance3D" type="MeshInstance3D" parent="Env/Player/Visuals" unique_id=1463840154]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
-mesh = SubResource("CapsuleMesh_g1dw6")
-
-[node name="CameraController" type="Node3D" parent="Env/Player" unique_id=2110311610 node_paths=PackedStringArray("camera_controller_anchor", "head", "main_camera")]
-script = ExtResource("6_iqnyd")
-camera_controller_anchor = NodePath("../HeadAnchor")
-head = NodePath("Head")
-main_camera = NodePath("Head/Camera")
-
-[node name="Head" type="Node3D" parent="Env/Player/CameraController" unique_id=371706036]
-unique_name_in_owner = true
-
-[node name="Camera" type="Camera3D" parent="Env/Player/CameraController/Head" unique_id=1825404127]
-unique_name_in_owner = true
-fov = 95.0
-
-[node name="StateMachine" type="Node" parent="Env/Player" unique_id=2042917096 node_paths=PackedStringArray("CURRENT_STATE")]
-script = ExtResource("7_pimt4")
-CURRENT_STATE = NodePath("IdleState")
-
-[node name="IdleState" type="Node" parent="Env/Player/StateMachine" unique_id=1017802009 node_paths=PackedStringArray("walking_state", "crouching_state")]
-script = ExtResource("8_hydoe")
-walking_state = NodePath("../WalkingState")
-crouching_state = NodePath("../CrouchingState")
-
-[node name="WalkingState" type="Node" parent="Env/Player/StateMachine" unique_id=2055799719 node_paths=PackedStringArray("idle_state", "inair_state", "crouching_state", "sprinting_state", "sliding_state")]
-script = ExtResource("9_wcpln")
-idle_state = NodePath("../IdleState")
-inair_state = NodePath("../InAirState")
-crouching_state = NodePath("../CrouchingState")
-sprinting_state = NodePath("../SprintingState")
-sliding_state = NodePath("../SlidingState")
-
-[node name="InAirState" type="Node" parent="Env/Player/StateMachine" unique_id=939290259 node_paths=PackedStringArray("idle_state", "sliding_state")]
-script = ExtResource("10_tfkjo")
-idle_state = NodePath("../IdleState")
-sliding_state = NodePath("../SlidingState")
-
-[node name="SprintingState" type="Node" parent="Env/Player/StateMachine" unique_id=562023350 node_paths=PackedStringArray("idle_state", "inair_state", "walking_state", "sliding_state", "crouching_state")]
-script = ExtResource("11_8qyhm")
-idle_state = NodePath("../IdleState")
-inair_state = NodePath("../InAirState")
-walking_state = NodePath("../WalkingState")
-sliding_state = NodePath("../SlidingState")
-crouching_state = NodePath("../CrouchingState")
-
-[node name="CrouchingState" type="Node" parent="Env/Player/StateMachine" unique_id=1976664509 node_paths=PackedStringArray("idle_state", "inair_state", "sprinting_state")]
-script = ExtResource("12_ph7ql")
-idle_state = NodePath("../IdleState")
-inair_state = NodePath("../InAirState")
-sprinting_state = NodePath("../SprintingState")
-
-[node name="SlidingState" type="Node" parent="Env/Player/StateMachine" unique_id=146208436 node_paths=PackedStringArray("inair_state", "idle_state", "crouch_state", "walking_state")]
-script = ExtResource("13_ppcfd")
-inair_state = NodePath("../InAirState")
-idle_state = NodePath("../IdleState")
-crouch_state = NodePath("../CrouchingState")
-walking_state = NodePath("../WalkingState")
-
-[node name="InputHandeler" type="Node" parent="Env/Player" unique_id=1253015289]
-script = ExtResource("14_ckdjk")
-invert_sprint = true
-
-[node name="TagComponent" parent="Env/Player" unique_id=1432970655 instance=ExtResource("15_x07jy")]
