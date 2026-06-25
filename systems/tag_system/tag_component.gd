@@ -1,7 +1,12 @@
 class_name TagComponent extends NetworkOwnedObj
 
+signal tag_recieved
+signal tag_given
+
+@export var hit_power : float = 10.0
 @export var tagged : bool = false
 var owner_player : Player
+
 
 func setup(base_owner : Node):
 	owner_player = base_owner as Player
@@ -9,16 +14,28 @@ func setup(base_owner : Node):
 func tagged_other(tagged_player_id : int):
 	if not owner_player.is_multiplayer_authority(): return
 	
-	print(" I tagged someone : ", tagged_player_id)
-
-func got_tagged(tagger_player_id : int):
-	if not owner_player.is_multiplayer_authority(): return
-		
-	print("I got tagged by", tagger_player_id)
-	owner_player.velocity += -Global.get_player_by_id(tagger_player_id).camera_controller.main_camera.global_transform.basis.z * 10000.0
-
-func clear_self_tag():
+	print("Tagged Player #", tagged_player_id)
 	tagged = false
+	owner_player.visual_controller.set_outline_state(false)
+	
+	tag_given.emit()
+
+func receive_tag(tagger_player_id : int):
+	if not owner_player.is_multiplayer_authority() and !owner_player.dummy: return
+		
+	print("Tagged by Player #", tagger_player_id)
+	tagged = true
+	tag_recieved.emit()
+	owner_player.visual_controller.set_outline_state(true)
+	
+	receive_hit(tagger_player_id)
+
+func receive_hit(hitting_player_id : int):
+	var hitting_player : Player = Global.get_player_by_id(hitting_player_id)
+	
+	owner_player.velocity += -hitting_player.camera_controller.main_camera.global_transform.basis.z * hitting_player.tag_component.hit_power
+	print("Hit by Player #", hitting_player_id)
+	
 
 
 #func attempt_tag(on_player : Player):

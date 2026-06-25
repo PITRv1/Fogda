@@ -5,6 +5,7 @@ class_name Player extends CharacterBody3D
 @export_category("Controllers")
 @export var camera_controller : CameraController
 @export var input_handeler : InputHandeler
+@export var visual_controller : VisualController
 
 @export_category("Components")
 @export var state_machine : StateMachine
@@ -78,8 +79,6 @@ var jump_avalible := false
 var jump_buffer_running := false
 var coyote_timer_running := false
 
-
-
 var stamina := 1.0
 var is_depleted := false
 
@@ -96,9 +95,12 @@ func _enter_tree() -> void:
 
 func _ready() -> void:
 	if dummy:
+		state_machine.disabled = true
 		set_process(false)
 		set_physics_process(false)
-		state_machine.disabled = true
+		
+		tag_component.setup(self)
+		visual_controller.setup(self)
 		return
 	
 	if is_multiplayer_authority():
@@ -106,6 +108,7 @@ func _ready() -> void:
 		state_machine.setup(self)
 		input_handeler.setup(self)
 		tag_component.setup(self)
+		visual_controller.setup(self)
 		
 		var rnd_x = randf_range(-5,5)
 		var rnd_z = randf_range(-5,5)
@@ -120,13 +123,11 @@ func _ready() -> void:
 		set_physics_process(false)
 		state_machine.disabled = true
 
+
 func _physics_process(delta: float) -> void:
-	var is_local_player := name.to_int() == multiplayer.get_unique_id()
-	
-	if is_local_player:
+	if is_multiplayer_authority():
 		camera_controller.update_camera_controller(delta)
 
-######################################################
 
 #region Stairs && Slope checks && Movement
 
@@ -172,8 +173,7 @@ func snap_up_to_stairs_check(delta) -> bool:
 	return false
 #endregion
 
-
-############-----Player PHYSICS-----###############
+#region Player Physics
 
 func friction(target_speed, applied_friction, delta:float) ->void:
 	var control = max(self.velocity.length(), ground_decel)
@@ -207,8 +207,8 @@ func _handle_air_physics(delta: float) -> void:
 		var accel_speed = air_accel * air_move_speed * delta * penalty
 		accel_speed = min(accel_speed, add_speed_till_cap)
 		self.velocity += accel_speed * wish_dir
+#endregion
 
-################
 
 func _handle_jump():
 	if is_on_floor():
@@ -341,6 +341,15 @@ func hit():
 	
 	
 	if collider is Player:
+		
+		# Bypass the normal server logic for testdummy cause it wont work otherwise
+		if collider.dummy:
+			if self.tag_component.tagged:
+				if not collider.tag_component.tagged:
+					tag_component.tagged_other(collider.name.to_int())
+					collider.tag_component.receive_tag(self.get_multiplayer_authority())
+			return
+		
 		var target_peer_id = collider.get_multiplayer_authority()
 		Global.server_process_hit_attempt.rpc_id(1, target_peer_id)
 		

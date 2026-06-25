@@ -36,7 +36,7 @@ func client_you_were_tagged(tagged_id : int,tagger_id: int) -> void:
 	if not multiplayer.is_server() and multiplayer.get_remote_sender_id() != 1: 
 		return
 	
-	get_player_by_id(tagged_id).tag_component.got_tagged(tagger_id)
+	get_player_by_id(tagged_id).tag_component.receive_tag(tagger_id)
 	
 	
 func get_player_by_id(id : int) -> Player:
