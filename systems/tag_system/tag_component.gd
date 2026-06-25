@@ -5,6 +5,8 @@ signal tagged_changed(new_state : bool)
 @export var hit_power : float = 10.0
 @export var tagged : bool = false : 
 	set(value):
+		if tagged == value: return
+		
 		tagged = value
 		tagged_changed.emit(tagged)
 
@@ -23,7 +25,7 @@ func tagged_other(tagged_player_id : int):
 	
 
 func receive_tag(tagger_player_id : int):
-	if not owner_player.is_multiplayer_authority() and !owner_player.dummy: return
+	if not owner_player.is_multiplayer_authority(): return
 		
 	print("Tagged by Player #", tagger_player_id)
 	tagged = true

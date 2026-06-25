@@ -10,6 +10,7 @@ class_name Player extends CharacterBody3D
 @export_category("Components")
 @export var state_machine : StateMachine
 @export var tag_component : TagComponent
+@export var multiplayer_syncher : MultiplayerSynchronizer
 
 @export_category("Camera")
 @export_range(.0001,.003,.0001) var look_sensitivity := 0.01
@@ -91,6 +92,7 @@ func _enter_tree() -> void:
 		self.name = str(9999)
 	
 	set_multiplayer_authority(name.to_int())
+	multiplayer_syncher.set_multiplayer_authority(name.to_int())
 	add_to_group("players")
 
 func _ready() -> void:

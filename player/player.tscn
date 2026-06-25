@@ -4,7 +4,6 @@
 [ext_resource type="Script" uid="uid://l3or1dk7h4r4" path="res://player/visual_controller.gd" id="2_ebec5"]
 [ext_resource type="Script" uid="uid://c2vvv4qf26qv7" path="res://player/controllers/camera_controller.gd" id="2_rkbax"]
 [ext_resource type="Script" uid="uid://d2174cxqjfead" path="res://systems/state_machine/state_machine.gd" id="3_g1dw6"]
-[ext_resource type="Material" uid="uid://dkxj8d86s1h8n" path="res://assets/mats/outline_mat.tres" id="3_yllr7"]
 [ext_resource type="Script" uid="uid://hd1lmwh1hh2k" path="res://systems/state_machine/player_states/idle_player_state.gd" id="4_yw30f"]
 [ext_resource type="Script" uid="uid://cfjh5ufvlfb7w" path="res://systems/state_machine/player_states/walking_player_state.gd" id="5_qjkh3"]
 [ext_resource type="Script" uid="uid://dh5wraa7052n3" path="res://systems/state_machine/player_states/inair_player_state.gd" id="6_g6k8r"]
@@ -30,13 +29,14 @@ height = 1.7387695
 
 [sub_resource type="CapsuleMesh" id="CapsuleMesh_g1dw6"]
 
-[node name="Player" type="CharacterBody3D" unique_id=1187813961 node_paths=PackedStringArray("camera_controller", "input_handeler", "visual_controller", "state_machine", "tag_component")]
+[node name="Player" type="CharacterBody3D" unique_id=1187813961 node_paths=PackedStringArray("camera_controller", "input_handeler", "visual_controller", "state_machine", "tag_component", "multiplayer_syncher")]
 script = ExtResource("1_oul6g")
 camera_controller = NodePath("CameraController")
 input_handeler = NodePath("InputHandeler")
 visual_controller = NodePath("Visuals")
 state_machine = NodePath("StateMachine")
 tag_component = NodePath("TagComponent")
+multiplayer_syncher = NodePath("MultiplayerSynchronizer")
 look_sensitivity = 0.0011
 walk_speed = 5.0
 sprint_speed = 6.0
@@ -70,7 +70,6 @@ mesh = NodePath("MeshInstance3D")
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="Visuals" unique_id=1463840154]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
-material_override = ExtResource("3_yllr7")
 mesh = SubResource("CapsuleMesh_g1dw6")
 
 [node name="CameraController" type="Node3D" parent="." unique_id=2110311610 node_paths=PackedStringArray("camera_controller_anchor", "head", "main_camera")]
