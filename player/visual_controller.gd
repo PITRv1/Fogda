@@ -16,8 +16,6 @@ func setup(base_owner : Node):
 func set_outline_state(state : bool):
 	if safety_check_invalid(): return
 
-	print("I shoudl paint myself")
-
 	if state == true:
 		mesh.material_overlay = OUTLINE_MAT
 	else:

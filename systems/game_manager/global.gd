@@ -20,6 +20,11 @@ func server_process_hit_attempt(target_id : int):
 				
 				client_hit_confirmed.rpc_id(tagger_id, tagger_id, target_id, true)
 				client_you_were_hit.rpc_id(target_id, target_id, tagger_id, true)
+				
+			else:
+				client_hit_confirmed.rpc_id(tagger_id, tagger_id, target_id, false)
+				client_you_were_hit.rpc_id(target_id, target_id, tagger_id, false)
+			
 		else:
 			client_hit_confirmed.rpc_id(tagger_id, tagger_id, target_id, false)
 			client_you_were_hit.rpc_id(target_id, target_id, tagger_id, false)

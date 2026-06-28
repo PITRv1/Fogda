@@ -4,11 +4,25 @@ extends CanvasLayer
 @onready var line_edit_lobby_id: LineEdit = %LineEditLobbyId
 @onready var button_join: Button = %ButtonJoin
 
+@onready var button_host_local: Button = %ButtonHostLocal
+@onready var button_join_local: Button = %ButtonJoinLocal
+
 
 func _ready() -> void:
+	button_host_local.pressed.connect(_on_host_local_pressed)
+	button_join_local.pressed.connect(_on_join_local_pressed)
+	
 	button_host.pressed.connect(_on_host_pressed)
 	line_edit_lobby_id.text_changed.connect(_on_lobby_id_changed)
 	button_join.pressed.connect(_on_join_pressed)
+
+func _on_host_local_pressed():
+	Network.host_local()
+	hide()
+
+func _on_join_local_pressed():
+	Network.join_local() 
+	hide()
 
 func _on_host_pressed():
 	Network.host_lobby()

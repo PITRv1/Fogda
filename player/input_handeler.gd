@@ -19,7 +19,7 @@ func _physics_process(_delta: float) -> void:
 	crouch_held = Input.is_action_pressed("crouch") 
 	sprint_held = !Input.is_action_pressed("sprint") if invert_sprint else Input.is_action_pressed("sprint")
 	
-	if Input.is_action_pressed("jump"):
+	if Input.is_action_just_pressed("jump"):
 		jump_pressed.emit()
 	
 	if Input.is_action_just_pressed("hit"):

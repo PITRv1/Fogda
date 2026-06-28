@@ -1,16 +1,32 @@
 extends Node
 
+signal countdown_updated(time_left : int)
+signal countdown_canceled()
+signal game_started()
+
 var lobby_id : int = 0
 var peer : SteamMultiplayerPeer
 
 var is_host : bool = false
 var is_joining : bool = false
 
+var lobby_timer : Timer
+var countdown_time : int = 3
+
+## For ENet
+const LOCAL_PORT := 8080
+const LOCAL_IP := "127.0.0.1"
+
 func _ready() -> void:
 	print("Steam initialized: ", Steam.steamInit(480, true))
 	Steam.initRelayNetworkAccess()
 	Steam.lobby_created.connect(_on_lobby_created)
 	Steam.lobby_joined.connect(_on_lobby_joined)
+	
+	lobby_timer = Timer.new()
+	lobby_timer.wait_time = 1.0 # 1 second ticks
+	lobby_timer.timeout.connect(_on_lobby_timer_tick)
+	add_child(lobby_timer)
 	
 func host_lobby():
 	Steam.createLobby(Steam.LobbyType.LOBBY_TYPE_PUBLIC, 16)
@@ -59,6 +75,7 @@ func add_player(id : int = 1):
 	player.name = str(id)
 	
 	Global.game_manager.world_conatiner.add_child.call_deferred(player, true)
+	check_lobby_capacity()
 
 func remove_player(id : int):
 	if not multiplayer.is_server():
@@ -70,3 +87,70 @@ func remove_player(id : int):
 	if player_to_remove != -1:
 		players[player_to_remove].queue_free()
 	
+	check_lobby_capacity()
+
+func host_local():
+	var enet_peer := ENetMultiplayerPeer.new()
+	var err = enet_peer.create_server(LOCAL_PORT)
+	if err != OK:
+		print("Failed to host local server: ", err)
+		return
+		
+	multiplayer.multiplayer_peer = enet_peer
+	
+	if not multiplayer.peer_connected.is_connected(_on_peer_connected):
+		multiplayer.peer_connected.connect(_on_peer_connected)
+	if not multiplayer.peer_disconnected.is_connected(remove_player):
+		multiplayer.peer_disconnected.connect(remove_player)
+		
+	is_host = true
+	add_player(1)
+	
+	print("Local ENet server started on port ", LOCAL_PORT)
+	
+func join_local(ip_address : String = LOCAL_IP):
+	var enet_peer := ENetMultiplayerPeer.new()
+	var err = enet_peer.create_client(ip_address, LOCAL_PORT)
+	
+	if err != OK:
+		print("Failed to join local server: ", err)
+		return
+		
+	multiplayer.multiplayer_peer = enet_peer
+	print("Joined local ENet server at ", ip_address)
+	
+func check_lobby_capacity():
+	var total_players = multiplayer.get_peers().size() + 1
+	
+	if total_players >= 2:
+		
+		if lobby_timer.is_stopped():
+			countdown_time = 5 
+			lobby_timer.start()
+			rpc_update_countdown.rpc(countdown_time)
+	else:
+		if not lobby_timer.is_stopped():
+			lobby_timer.stop()
+			rpc_cancel_countdown.rpc()
+
+
+func _on_lobby_timer_tick():
+	countdown_time -= 1
+	rpc_update_countdown.rpc(countdown_time)
+	
+	if countdown_time <= 0:
+		lobby_timer.stop()
+		rpc_start_game.rpc()
+
+@rpc("authority", "call_local", "reliable")
+func rpc_update_countdown(time : int):
+	countdown_updated.emit(time)
+
+@rpc("authority", "call_local", "reliable")
+func rpc_cancel_countdown():
+	countdown_canceled.emit()
+
+@rpc("authority", "call_local", "reliable")
+func rpc_start_game():
+	print('game started')
+	game_started.emit()

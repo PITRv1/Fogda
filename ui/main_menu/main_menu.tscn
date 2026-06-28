@@ -9,6 +9,20 @@ shadow_size = 5
 shadow_color = Color(0, 0.50980395, 0.21176471, 1)
 shadow_offset = Vector2(1.415, 1.195)
 
+[sub_resource type="LabelSettings" id="LabelSettings_uhj5c"]
+font_size = 32
+font_color = Color(0.9186724, 0.84443986, 0.9253719, 1)
+shadow_size = 5
+shadow_color = Color(0.25079998, 0.3611667, 0.44, 1)
+shadow_offset = Vector2(1.415, 1.195)
+
+[sub_resource type="LabelSettings" id="LabelSettings_mu8pm"]
+font_size = 32
+font_color = Color(0.33999997, 0.97800004, 1, 1)
+shadow_size = 5
+shadow_color = Color(0.25079998, 0.3611667, 0.44, 1)
+shadow_offset = Vector2(1.415, 1.195)
+
 [node name="MainMenu" type="CanvasLayer" unique_id=542858123]
 script = ExtResource("1_ktvvl")
 
@@ -53,6 +67,35 @@ vertical_alignment = 1
 
 [node name="HSeparator" type="HSeparator" parent="Control/PanelContainer/MarginContainer/VBoxContainer" unique_id=1840599652]
 layout_mode = 2
+
+[node name="Label4" type="Label" parent="Control/PanelContainer/MarginContainer/VBoxContainer" unique_id=1765645505]
+layout_mode = 2
+text = "Local"
+label_settings = SubResource("LabelSettings_uhj5c")
+vertical_alignment = 1
+
+[node name="ButtonHostLocal" type="Button" parent="Control/PanelContainer/MarginContainer/VBoxContainer" unique_id=210241001]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Host Local"
+
+[node name="HSeparator3" type="HSeparator" parent="Control/PanelContainer/MarginContainer/VBoxContainer" unique_id=684237888]
+layout_mode = 2
+
+[node name="ButtonJoinLocal" type="Button" parent="Control/PanelContainer/MarginContainer/VBoxContainer" unique_id=1597795618]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Join Local"
+
+[node name="HSeparator4" type="HSeparator" parent="Control/PanelContainer/MarginContainer/VBoxContainer" unique_id=1607368940]
+layout_mode = 2
+theme_override_constants/separation = 42
+
+[node name="Label3" type="Label" parent="Control/PanelContainer/MarginContainer/VBoxContainer" unique_id=95738550]
+layout_mode = 2
+text = "Steam"
+label_settings = SubResource("LabelSettings_mu8pm")
+vertical_alignment = 1
 
 [node name="ButtonHost" type="Button" parent="Control/PanelContainer/MarginContainer/VBoxContainer" unique_id=739137934]
 unique_name_in_owner = true

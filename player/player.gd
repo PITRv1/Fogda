@@ -60,6 +60,7 @@ class_name Player extends CharacterBody3D
 
 @onready var stairs_ahead_raycast: RayCast3D = %StairsAheadRayCast
 @onready var stairs_below_raycast: RayCast3D = %StairsBelowRayCast
+@onready var collision : CollisionShape3D = %PlayerCollision
 
 #Saved inputs and directions
 var input_dir := Vector2.ZERO
@@ -85,6 +86,7 @@ var is_depleted := false
 
 var is_dead : bool = false
 
+@export var disabled : bool = false
 
 func _enter_tree() -> void:
 	if dummy: 
@@ -96,6 +98,8 @@ func _enter_tree() -> void:
 	add_to_group("players")
 
 func _ready() -> void:
+	disabled = true
+	
 	if dummy:
 		state_machine.disabled = true
 		set_process(false)
@@ -110,7 +114,6 @@ func _ready() -> void:
 		state_machine.setup(self)
 		input_handeler.setup(self)
 		tag_component.setup(self)
-		visual_controller.setup(self)
 		
 		var rnd_x = randf_range(-5,5)
 		var rnd_z = randf_range(-5,5)
@@ -125,6 +128,8 @@ func _ready() -> void:
 		set_physics_process(false)
 		state_machine.disabled = true
 
+	visual_controller.setup(self)
+	
 
 func _physics_process(delta: float) -> void:
 	if is_multiplayer_authority():
@@ -224,7 +229,7 @@ func _handle_jump():
 
 func jump() -> void:
 	jump_avalible = false
-	self.velocity.y = 0 
+	#self.velocity.y = 0 
 	self.velocity.y += jump_power
 
 
@@ -237,7 +242,7 @@ func start_jump_buffer():
 func start_coyote_timer():
 	if coyote_timer_running: return
 	
-	get_tree().create_timer(0.1).timeout.connect(_on_coyote_timer_timeout)
+	get_tree().create_timer(0.15).timeout.connect(_on_coyote_timer_timeout)
 	coyote_timer_running = true
 
 func _on_jump_buffer_timer_timeout() -> void:
@@ -261,7 +266,7 @@ func _can_uncrouch():
 func _is_velocity_aligned_with_camera():
 	var desire_direction = -camera_controller.main_camera.global_transform.basis.z
 	
-	var flat_desire_dir = Vector3(desire_direction.x,0,desire_direction.y).normalized()
+	var flat_desire_dir = Vector3(desire_direction.x,0,desire_direction.z).normalized()
 	
 	return 1.0 - vel_cam_allignment_allowed_deviation < clampf(flat_desire_dir.dot(wish_dir),-1,1)
 
@@ -309,8 +314,10 @@ func update_input(delta) -> void:
 	if is_on_floor(): _last_frame_was_on_floor = Engine.get_physics_frames()
 
 	# Read local inputs directly
-	input_dir = input_handeler.input_dir
+	if !disabled:
+		input_dir = input_handeler.input_dir
 	wish_dir = self.global_transform.basis * Vector3(input_dir.x, 0., input_dir.y)
+	
 	can_slide = _is_velocity_aligned_with_camera() and input_handeler.crouch_held
 	
 	_handle_crouch(delta)
@@ -356,7 +363,7 @@ func hit():
 		Global.server_process_hit_attempt.rpc_id(1, target_peer_id)
 		
 	else:
-		velocity += self.camera_controller.main_camera.global_transform.basis.z * self.tag_component.hit_power
+		velocity += self.camera_controller.main_camera.global_transform.basis.z * self.tag_component.hit_power * 0.5
 	
 	hit_cooldown = true
 	get_tree().create_timer(1.0).timeout.connect(func(): hit_cooldown = false)

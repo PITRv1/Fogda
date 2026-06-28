@@ -23,6 +23,9 @@ properties/1/replication_mode = 1
 properties/2/path = NodePath("TagComponent:tagged")
 properties/2/spawn = true
 properties/2/replication_mode = 1
+properties/3/path = NodePath(".:disabled")
+properties/3/spawn = true
+properties/3/replication_mode = 1
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_hg6s5"]
 height = 1.7387695
@@ -38,16 +41,17 @@ state_machine = NodePath("StateMachine")
 tag_component = NodePath("TagComponent")
 multiplayer_syncher = NodePath("MultiplayerSynchronizer")
 look_sensitivity = 0.0014
-local_gravity = 18.0
-jump_power = 7.0
+local_gravity = 23.0
+jump_power = 8.0
 walk_speed = 5.0
 sprint_speed = 6.0
 crouch_speed = 4.0
 ground_accel = 30.0
 ground_decel = 15.0
-vel_cam_allignment_allowed_deviation = 0.9
+slide_speed_threshold = 6.5
+vel_cam_allignment_allowed_deviation = 1.0
 use_stamina = false
-falling_gravity_multiplier = 1.4
+falling_gravity_multiplier = 1.2
 
 [node name="MultiplayerSynchronizer" type="MultiplayerSynchronizer" parent="." unique_id=295242381]
 replication_config = SubResource("SceneReplicationConfig_oul6g")
@@ -137,4 +141,4 @@ script = ExtResource("8_rgyib")
 invert_sprint = true
 
 [node name="TagComponent" parent="." unique_id=1432970655 instance=ExtResource("11_2ieo8")]
-tagged = true
+hit_power = 15.0

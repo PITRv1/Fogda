@@ -14,7 +14,7 @@ var is_next_state_crouch_state := false
 
 func enter(_prev_state)->void:
 	saved_friction = owner_entity.ground_friction
-	owner_entity.ground_friction = 1.0
+	owner_entity.ground_friction = 0.8
 	
 	# gl understanding this shit future me lmao
 	desire_direction = -owner_entity.camera_controller.main_camera.global_transform.basis.z
