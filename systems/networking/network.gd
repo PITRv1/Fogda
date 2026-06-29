@@ -4,6 +4,9 @@ signal countdown_updated(time_left : int)
 signal countdown_canceled()
 signal game_started()
 
+signal round_time_updated(time_left : int)
+signal round_ended()
+
 var lobby_id : int = 0
 var peer : SteamMultiplayerPeer
 
@@ -12,6 +15,11 @@ var is_joining : bool = false
 
 var lobby_timer : Timer
 var countdown_time : int = 3
+
+var round_timer : Timer
+var round_time_left : int = 5 # Default match length: 180 seconds (3 minutes)
+
+var current_selected_map : MapUiResource
 
 ## For ENet
 const LOCAL_PORT := 8080
@@ -24,9 +32,14 @@ func _ready() -> void:
 	Steam.lobby_joined.connect(_on_lobby_joined)
 	
 	lobby_timer = Timer.new()
-	lobby_timer.wait_time = 1.0 # 1 second ticks
+	lobby_timer.wait_time = 1.0
 	lobby_timer.timeout.connect(_on_lobby_timer_tick)
 	add_child(lobby_timer)
+	
+	round_timer = Timer.new()
+	round_timer.wait_time = 1.0
+	round_timer.timeout.connect(_on_round_timer_tick)
+	add_child(round_timer)
 	
 func host_lobby():
 	Steam.createLobby(Steam.LobbyType.LOBBY_TYPE_PUBLIC, 16)
@@ -102,8 +115,11 @@ func host_local():
 		multiplayer.peer_connected.connect(_on_peer_connected)
 	if not multiplayer.peer_disconnected.is_connected(remove_player):
 		multiplayer.peer_disconnected.connect(remove_player)
-		
+	
 	is_host = true
+	
+	Global.game_manager.load_map(current_selected_map.map_scene)
+	
 	add_player(1)
 	
 	print("Local ENet server started on port ", LOCAL_PORT)
@@ -141,6 +157,19 @@ func _on_lobby_timer_tick():
 	if countdown_time <= 0:
 		lobby_timer.stop()
 		rpc_start_game.rpc()
+		
+func _on_round_timer_tick():
+	round_time_left -= 1
+	rpc_update_round_countdown.rpc(round_time_left)
+	
+	if round_time_left <= 0:
+		round_timer.stop()
+		rpc_end_round.rpc()
+
+func stop_round_early():
+	if multiplayer.is_server() and not round_timer.is_stopped():
+		round_timer.stop()
+		rpc_end_round.rpc()
 
 @rpc("authority", "call_local", "reliable")
 func rpc_update_countdown(time : int):
@@ -154,3 +183,17 @@ func rpc_cancel_countdown():
 func rpc_start_game():
 	print('game started')
 	game_started.emit()
+	
+	if multiplayer.is_server():
+		round_time_left = 180
+		round_timer.start()
+		rpc_update_round_countdown.rpc(round_time_left)
+	
+@rpc("authority", "call_local", "reliable")
+func rpc_update_round_countdown(time : int):
+	round_time_updated.emit(time)
+
+@rpc("authority", "call_local", "reliable")
+func rpc_end_round():
+	print('round ended')
+	round_ended.emit()

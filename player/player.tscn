@@ -12,6 +12,7 @@
 [ext_resource type="Script" uid="uid://bswk8sqbocga0" path="res://player/input_handeler.gd" id="8_rgyib"]
 [ext_resource type="Script" uid="uid://drkbk8s8k6q32" path="res://systems/state_machine/player_states/sliding_player_state.gd" id="9_8t03j"]
 [ext_resource type="PackedScene" uid="uid://rkedb466u1l6" path="res://systems/tag_system/tag_component.tscn" id="11_2ieo8"]
+[ext_resource type="Script" uid="uid://dx5r28vla2x68" path="res://player/player_ui.gd" id="13_yllr7"]
 
 [sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_oul6g"]
 properties/0/path = NodePath(".:position")
@@ -32,11 +33,15 @@ height = 1.7387695
 
 [sub_resource type="CapsuleMesh" id="CapsuleMesh_g1dw6"]
 
-[node name="Player" type="CharacterBody3D" unique_id=1187813961 node_paths=PackedStringArray("camera_controller", "input_handeler", "visual_controller", "state_machine", "tag_component", "multiplayer_syncher")]
+[sub_resource type="LabelSettings" id="LabelSettings_kb6p2"]
+font_size = 78
+
+[node name="Player" type="CharacterBody3D" unique_id=1187813961 node_paths=PackedStringArray("camera_controller", "input_handeler", "visual_controller", "player_ui", "state_machine", "tag_component", "multiplayer_syncher")]
 script = ExtResource("1_oul6g")
 camera_controller = NodePath("CameraController")
 input_handeler = NodePath("InputHandeler")
 visual_controller = NodePath("Visuals")
+player_ui = NodePath("PlayerUi")
 state_machine = NodePath("StateMachine")
 tag_component = NodePath("TagComponent")
 multiplayer_syncher = NodePath("MultiplayerSynchronizer")
@@ -142,3 +147,37 @@ invert_sprint = true
 
 [node name="TagComponent" parent="." unique_id=1432970655 instance=ExtResource("11_2ieo8")]
 hit_power = 15.0
+
+[node name="PlayerUi" type="CanvasLayer" parent="." unique_id=915025617]
+script = ExtResource("13_yllr7")
+
+[node name="Control" type="Control" parent="PlayerUi" unique_id=1256852514]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Panel" type="Panel" parent="PlayerUi/Control" unique_id=1676894687]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -147.0
+offset_top = 60.0
+offset_right = 147.0
+offset_bottom = 196.0
+grow_horizontal = 2
+
+[node name="LabelGameStartCoutdown" type="Label" parent="PlayerUi/Control/Panel" unique_id=615926021]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+label_settings = SubResource("LabelSettings_kb6p2")
+horizontal_alignment = 1
+vertical_alignment = 1

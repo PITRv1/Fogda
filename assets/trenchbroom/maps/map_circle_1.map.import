@@ -1,0 +1,14 @@
+[remap]
+
+importer="func_godot.map"
+type="Resource"
+uid="uid://p0s0w1cfvy0m"
+path="res://.godot/imported/map_circle_1.map-5efafaf47cb35a9fc7017d9c809ec42b.tres"
+
+[deps]
+
+source_file="res://assets/trenchbroom/maps/map_circle_1.map"
+dest_files=["res://.godot/imported/map_circle_1.map-5efafaf47cb35a9fc7017d9c809ec42b.tres"]
+
+[params]
+

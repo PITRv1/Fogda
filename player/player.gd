@@ -6,6 +6,7 @@ class_name Player extends CharacterBody3D
 @export var camera_controller : CameraController
 @export var input_handeler : InputHandeler
 @export var visual_controller : VisualController
+@export var player_ui : PlayerUI
 
 @export_category("Components")
 @export var state_machine : StateMachine
@@ -115,9 +116,8 @@ func _ready() -> void:
 		input_handeler.setup(self)
 		tag_component.setup(self)
 		
-		var rnd_x = randf_range(-5,5)
-		var rnd_z = randf_range(-5,5)
-		self.global_position = Vector3(rnd_x, 2, rnd_z)
+		state_machine.disabled = true
+		Global.rpc_request_spawn.rpc_id(1)
 		
 		Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
 		
@@ -129,12 +129,12 @@ func _ready() -> void:
 		state_machine.disabled = true
 
 	visual_controller.setup(self)
+	player_ui.owner_player = self
 	
 
 func _physics_process(delta: float) -> void:
 	if is_multiplayer_authority():
 		camera_controller.update_camera_controller(delta)
-
 
 #region Stairs && Slope checks && Movement
 
@@ -367,4 +367,5 @@ func hit():
 	
 	hit_cooldown = true
 	get_tree().create_timer(1.0).timeout.connect(func(): hit_cooldown = false)
+	
 	

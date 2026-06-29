@@ -70,3 +70,31 @@ func query_space(on_this_node : Node3D, from : Vector3, to : Vector3) -> Diction
 	var query = PhysicsRayQueryParameters3D.create(from, to)
 	
 	return space_state.intersect_ray(query)
+	
+
+@rpc("any_peer", "call_local", "reliable")
+func rpc_request_spawn():
+	var sender_id = multiplayer.get_remote_sender_id()
+	
+	var available_points = Global.game_manager.current_map.spawn_points.filter(
+		func(item : SpawnPoint): return not item.taken
+	)
+	
+	if available_points.size() > 0:
+		var chosen_point = available_points.pick_random()
+		chosen_point.taken = true
+		
+		rpc_receive_spawn_position.rpc_id(sender_id, chosen_point.global_position)
+	else:
+		push_warning("Server: Out of spawn points!")
+		rpc_receive_spawn_position.rpc_id(sender_id, Vector3.ZERO)
+
+@rpc("authority", "call_local", "reliable")
+func rpc_receive_spawn_position(spawn_pos : Vector3):
+	var my_id = multiplayer.get_unique_id()
+	var my_player = Global.get_player_by_id(my_id)
+	
+	if is_instance_valid(my_player):
+		my_player.global_position = spawn_pos
+		print("Client: Successfully spawned at assigned position: ", spawn_pos)
+	

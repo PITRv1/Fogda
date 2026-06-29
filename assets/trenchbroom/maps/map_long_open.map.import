@@ -1,0 +1,14 @@
+[remap]
+
+importer="func_godot.map"
+type="Resource"
+uid="uid://d3kpp8rinoq57"
+path="res://.godot/imported/map_long_open.map-955bb05831efb640ac03dd2f76b89413.tres"
+
+[deps]
+
+source_file="res://assets/trenchbroom/maps/map_long_open.map"
+dest_files=["res://.godot/imported/map_long_open.map-955bb05831efb640ac03dd2f76b89413.tres"]
+
+[params]
+

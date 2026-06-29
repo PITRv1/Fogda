@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="MapUiResource" format=3 uid="uid://xlhngr3nfmye"]
+
+[ext_resource type="PackedScene" uid="uid://c6b3b7ym72bhq" path="res://assets/maps/map_long_1.tscn" id="1_0vgyg"]
+[ext_resource type="Script" uid="uid://np5r0hleujk6" path="res://systems/map_system/ui_map_resource.gd" id="1_ug2vs"]
+
+[resource]
+script = ExtResource("1_ug2vs")
+name = "map_long_1"
+map_scene = ExtResource("1_0vgyg")
+metadata/_custom_type_script = "uid://np5r0hleujk6"

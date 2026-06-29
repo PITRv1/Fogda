@@ -23,8 +23,16 @@ shadow_size = 5
 shadow_color = Color(0.25079998, 0.3611667, 0.44, 1)
 shadow_offset = Vector2(1.415, 1.195)
 
-[node name="MainMenu" type="CanvasLayer" unique_id=542858123]
+[sub_resource type="LabelSettings" id="LabelSettings_omy8q"]
+font_size = 25
+shadow_size = 5
+shadow_offset = Vector2(1.415, 1.195)
+
+[sub_resource type="ButtonGroup" id="ButtonGroup_i5wg5"]
+
+[node name="MainMenu" type="CanvasLayer" unique_id=542858123 node_paths=PackedStringArray("example_map_checkbox")]
 script = ExtResource("1_ktvvl")
+example_map_checkbox = NodePath("Control/PanelContainer/HBoxContainer/MarginContainerMaps/VBoxContainer/CheckBoxExample")
 
 [node name="Control" type="Control" parent="." unique_id=1134105881]
 layout_mode = 3
@@ -41,82 +49,112 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -164.0
-offset_top = -100.5
-offset_right = 164.0
-offset_bottom = 100.5
+offset_left = -307.0
+offset_top = -227.5
+offset_right = 307.0
+offset_bottom = 227.5
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="MarginContainer" type="MarginContainer" parent="Control/PanelContainer" unique_id=16597261]
+[node name="HBoxContainer" type="HBoxContainer" parent="Control/PanelContainer" unique_id=354289829]
 layout_mode = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="Control/PanelContainer/HBoxContainer" unique_id=16597261]
+layout_mode = 2
+size_flags_horizontal = 3
 theme_override_constants/margin_left = 15
 theme_override_constants/margin_top = 15
 theme_override_constants/margin_right = 15
 theme_override_constants/margin_bottom = 15
 
-[node name="VBoxContainer" type="VBoxContainer" parent="Control/PanelContainer/MarginContainer" unique_id=219785128]
+[node name="VBoxContainer" type="VBoxContainer" parent="Control/PanelContainer/HBoxContainer/MarginContainer" unique_id=219785128]
 layout_mode = 2
 
-[node name="Label" type="Label" parent="Control/PanelContainer/MarginContainer/VBoxContainer" unique_id=468774213]
+[node name="Label" type="Label" parent="Control/PanelContainer/HBoxContainer/MarginContainer/VBoxContainer" unique_id=468774213]
 layout_mode = 2
 text = "Fogda"
 label_settings = SubResource("LabelSettings_tvumc")
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="HSeparator" type="HSeparator" parent="Control/PanelContainer/MarginContainer/VBoxContainer" unique_id=1840599652]
+[node name="HSeparator" type="HSeparator" parent="Control/PanelContainer/HBoxContainer/MarginContainer/VBoxContainer" unique_id=1840599652]
 layout_mode = 2
 
-[node name="Label4" type="Label" parent="Control/PanelContainer/MarginContainer/VBoxContainer" unique_id=1765645505]
+[node name="Label4" type="Label" parent="Control/PanelContainer/HBoxContainer/MarginContainer/VBoxContainer" unique_id=1765645505]
 layout_mode = 2
 text = "Local"
 label_settings = SubResource("LabelSettings_uhj5c")
 vertical_alignment = 1
 
-[node name="ButtonHostLocal" type="Button" parent="Control/PanelContainer/MarginContainer/VBoxContainer" unique_id=210241001]
+[node name="ButtonHostLocal" type="Button" parent="Control/PanelContainer/HBoxContainer/MarginContainer/VBoxContainer" unique_id=210241001]
 unique_name_in_owner = true
 layout_mode = 2
 text = "Host Local"
 
-[node name="HSeparator3" type="HSeparator" parent="Control/PanelContainer/MarginContainer/VBoxContainer" unique_id=684237888]
+[node name="HSeparator3" type="HSeparator" parent="Control/PanelContainer/HBoxContainer/MarginContainer/VBoxContainer" unique_id=684237888]
 layout_mode = 2
 
-[node name="ButtonJoinLocal" type="Button" parent="Control/PanelContainer/MarginContainer/VBoxContainer" unique_id=1597795618]
+[node name="ButtonJoinLocal" type="Button" parent="Control/PanelContainer/HBoxContainer/MarginContainer/VBoxContainer" unique_id=1597795618]
 unique_name_in_owner = true
 layout_mode = 2
 text = "Join Local"
 
-[node name="HSeparator4" type="HSeparator" parent="Control/PanelContainer/MarginContainer/VBoxContainer" unique_id=1607368940]
+[node name="HSeparator4" type="HSeparator" parent="Control/PanelContainer/HBoxContainer/MarginContainer/VBoxContainer" unique_id=1607368940]
 layout_mode = 2
 theme_override_constants/separation = 42
 
-[node name="Label3" type="Label" parent="Control/PanelContainer/MarginContainer/VBoxContainer" unique_id=95738550]
+[node name="Label3" type="Label" parent="Control/PanelContainer/HBoxContainer/MarginContainer/VBoxContainer" unique_id=95738550]
 layout_mode = 2
 text = "Steam"
 label_settings = SubResource("LabelSettings_mu8pm")
 vertical_alignment = 1
 
-[node name="ButtonHost" type="Button" parent="Control/PanelContainer/MarginContainer/VBoxContainer" unique_id=739137934]
+[node name="ButtonHost" type="Button" parent="Control/PanelContainer/HBoxContainer/MarginContainer/VBoxContainer" unique_id=739137934]
 unique_name_in_owner = true
 layout_mode = 2
 text = "Host"
 
-[node name="HSeparator2" type="HSeparator" parent="Control/PanelContainer/MarginContainer/VBoxContainer" unique_id=1651118911]
+[node name="HSeparator2" type="HSeparator" parent="Control/PanelContainer/HBoxContainer/MarginContainer/VBoxContainer" unique_id=1651118911]
 layout_mode = 2
 
-[node name="Label2" type="Label" parent="Control/PanelContainer/MarginContainer/VBoxContainer" unique_id=636712401]
+[node name="Label2" type="Label" parent="Control/PanelContainer/HBoxContainer/MarginContainer/VBoxContainer" unique_id=636712401]
 layout_mode = 2
 text = "Lobby code:"
 vertical_alignment = 1
 
-[node name="LineEditLobbyId" type="LineEdit" parent="Control/PanelContainer/MarginContainer/VBoxContainer" unique_id=1687574402]
+[node name="LineEditLobbyId" type="LineEdit" parent="Control/PanelContainer/HBoxContainer/MarginContainer/VBoxContainer" unique_id=1687574402]
 unique_name_in_owner = true
 layout_mode = 2
 placeholder_text = "enter here.  .  ."
 
-[node name="ButtonJoin" type="Button" parent="Control/PanelContainer/MarginContainer/VBoxContainer" unique_id=762247347]
+[node name="ButtonJoin" type="Button" parent="Control/PanelContainer/HBoxContainer/MarginContainer/VBoxContainer" unique_id=762247347]
 unique_name_in_owner = true
 layout_mode = 2
 disabled = true
 text = "Join"
+
+[node name="MarginContainerMaps" type="MarginContainer" parent="Control/PanelContainer/HBoxContainer" unique_id=61083609]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/margin_left = 15
+theme_override_constants/margin_top = 15
+theme_override_constants/margin_right = 15
+theme_override_constants/margin_bottom = 15
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Control/PanelContainer/HBoxContainer/MarginContainerMaps" unique_id=949677690]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="Control/PanelContainer/HBoxContainer/MarginContainerMaps/VBoxContainer" unique_id=1410190540]
+layout_mode = 2
+text = "Maps"
+label_settings = SubResource("LabelSettings_omy8q")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="HSeparator" type="HSeparator" parent="Control/PanelContainer/HBoxContainer/MarginContainerMaps/VBoxContainer" unique_id=795742883]
+layout_mode = 2
+
+[node name="CheckBoxExample" type="CheckBox" parent="Control/PanelContainer/HBoxContainer/MarginContainerMaps/VBoxContainer" unique_id=950651751]
+layout_mode = 2
+button_group = SubResource("ButtonGroup_i5wg5")
+text = "Test Map select"
