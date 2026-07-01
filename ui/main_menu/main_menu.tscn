@@ -1,13 +1,12 @@
 [gd_scene format=3 uid="uid://w0drjhcrks8b"]
 
 [ext_resource type="Script" uid="uid://csxpagxshvxcs" path="res://ui/main_menu/main_menu.gd" id="1_ktvvl"]
+[ext_resource type="PackedScene" uid="uid://b61m7vi8mxovr" path="res://assets/models/main_menu_bg.glb" id="2_omy8q"]
+[ext_resource type="Texture2D" uid="uid://cshcgr8hm4y72" path="res://assets/textures/normal/tex_concrete_1.png" id="3_i5wg5"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_tvumc"]
-font_size = 40
-font_color = Color(0, 1, 0.45000005, 1)
-shadow_size = 5
-shadow_color = Color(0, 0.50980395, 0.21176471, 1)
-shadow_offset = Vector2(1.415, 1.195)
+font_size = 90
+font_color = Color(0, 0, 0, 1)
 
 [sub_resource type="LabelSettings" id="LabelSettings_uhj5c"]
 font_size = 32
@@ -30,9 +29,102 @@ shadow_offset = Vector2(1.415, 1.195)
 
 [sub_resource type="ButtonGroup" id="ButtonGroup_i5wg5"]
 
+[sub_resource type="Environment" id="Environment_3c04x"]
+ssao_enabled = true
+ssao_radius = 0.44
+ssao_intensity = 3.26
+ssao_power = 1.3058258
+ssao_light_affect = 1.0
+ssao_ao_channel_affect = 1.0
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_joh67"]
+albedo_texture = ExtResource("3_i5wg5")
+uv1_triplanar = true
+uv1_world_triplanar = true
+
+[sub_resource type="Animation" id="Animation_omy8q"]
+length = 0.001
+tracks/0/type = "bezier"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Camera3D:position:x")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"handle_modes": PackedInt32Array(0),
+"points": PackedFloat32Array(-0.33824778, -0.25, 0, 0.25, 0),
+"times": PackedFloat32Array(0)
+}
+tracks/1/type = "bezier"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Camera3D:position:y")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"handle_modes": PackedInt32Array(0),
+"points": PackedFloat32Array(0.8488822, -0.25, 0, 0.25, 0),
+"times": PackedFloat32Array(0)
+}
+tracks/2/type = "bezier"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("Camera3D:position:z")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"handle_modes": PackedInt32Array(0),
+"points": PackedFloat32Array(-0.59194714, -0.25, 0, 0.25, 0),
+"times": PackedFloat32Array(0)
+}
+
+[sub_resource type="Animation" id="Animation_i5wg5"]
+resource_name = "camera_sway"
+length = 10.0
+loop_mode = 1
+tracks/0/type = "bezier"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Camera3D:position:x")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"handle_modes": PackedInt32Array(0, 2, 0),
+"points": PackedFloat32Array(-0.33824778, -0.25, 0, 0.25, 0, -0.338, -0.8335757, 0, 0.83309096, 0, -0.33824778, -0.25, 0, 0.25, 0),
+"times": PackedFloat32Array(0, 5.0014544, 10)
+}
+tracks/1/type = "bezier"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Camera3D:position:y")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"handle_modes": PackedInt32Array(0, 2, 0),
+"points": PackedFloat32Array(0.8488822, -0.25, 0, 2.5, -0.046150565, 0.914, -1.8876661, -0.034815263, 2.1985455, 0.04054898, 0.8488822, -0.25, 0, 0.25, 0),
+"times": PackedFloat32Array(0, 5.0014544, 10)
+}
+tracks/2/type = "bezier"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("Camera3D:position:z")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"handle_modes": PackedInt32Array(0, 2, 0),
+"points": PackedFloat32Array(-0.59194714, -0.25, 0, 0.25, 0, -0.592, -0.8335757, 0, 0.83309096, 0, -0.59194714, -0.25, 0, 0.25, 0),
+"times": PackedFloat32Array(0, 5.0014544, 10)
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_3c04x"]
+_data = {
+&"RESET": SubResource("Animation_omy8q"),
+&"camera_sway": SubResource("Animation_i5wg5")
+}
+
 [node name="MainMenu" type="CanvasLayer" unique_id=542858123 node_paths=PackedStringArray("example_map_checkbox")]
 script = ExtResource("1_ktvvl")
-example_map_checkbox = NodePath("Control/PanelContainer/HBoxContainer/MarginContainerMaps/VBoxContainer/CheckBoxExample")
+example_map_checkbox = NodePath("Control/PanelContainer/MarginContainer/VBoxContainer/VBoxContainer/MarginContainer2/HBoxContainer/MarginContainerMaps/VBoxContainer/CheckBoxExample")
 
 [node name="Control" type="Control" parent="." unique_id=1134105881]
 layout_mode = 3
@@ -42,98 +134,76 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="PanelContainer" type="PanelContainer" parent="Control" unique_id=86840248]
+[node name="PanelContainer" type="Control" parent="Control" unique_id=1393316649]
 layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
+anchors_preset = 4
 anchor_top = 0.5
-anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -307.0
-offset_top = -227.5
-offset_right = 307.0
-offset_bottom = 227.5
-grow_horizontal = 2
+offset_left = 123.0
+offset_top = -355.0
+offset_right = 609.0
+offset_bottom = 355.0
 grow_vertical = 2
 
-[node name="HBoxContainer" type="HBoxContainer" parent="Control/PanelContainer" unique_id=354289829]
+[node name="MarginContainer" type="MarginContainer" parent="Control/PanelContainer" unique_id=1898231018]
+layout_mode = 0
+offset_right = 486.0
+offset_bottom = 710.0
+theme_override_constants/margin_top = 14
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Control/PanelContainer/MarginContainer" unique_id=342162129]
 layout_mode = 2
 
-[node name="MarginContainer" type="MarginContainer" parent="Control/PanelContainer/HBoxContainer" unique_id=16597261]
-layout_mode = 2
-size_flags_horizontal = 3
-theme_override_constants/margin_left = 15
-theme_override_constants/margin_top = 15
-theme_override_constants/margin_right = 15
-theme_override_constants/margin_bottom = 15
-
-[node name="VBoxContainer" type="VBoxContainer" parent="Control/PanelContainer/HBoxContainer/MarginContainer" unique_id=219785128]
-layout_mode = 2
-
-[node name="Label" type="Label" parent="Control/PanelContainer/HBoxContainer/MarginContainer/VBoxContainer" unique_id=468774213]
+[node name="Label" type="Label" parent="Control/PanelContainer/MarginContainer/VBoxContainer" unique_id=468774213]
 layout_mode = 2
 text = "Fogda"
 label_settings = SubResource("LabelSettings_tvumc")
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="HSeparator" type="HSeparator" parent="Control/PanelContainer/HBoxContainer/MarginContainer/VBoxContainer" unique_id=1840599652]
+[node name="VBoxContainer" type="VBoxContainer" parent="Control/PanelContainer/MarginContainer/VBoxContainer" unique_id=2018221791]
 layout_mode = 2
 
-[node name="Label4" type="Label" parent="Control/PanelContainer/HBoxContainer/MarginContainer/VBoxContainer" unique_id=1765645505]
+[node name="MarginContainer" type="MarginContainer" parent="Control/PanelContainer/MarginContainer/VBoxContainer/VBoxContainer" unique_id=913344728]
+layout_mode = 2
+theme_override_constants/margin_left = 15
+theme_override_constants/margin_top = 15
+theme_override_constants/margin_right = 15
+theme_override_constants/margin_bottom = 15
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Control/PanelContainer/MarginContainer/VBoxContainer/VBoxContainer/MarginContainer" unique_id=1388575657]
+layout_mode = 2
+
+[node name="Label4" type="Label" parent="Control/PanelContainer/MarginContainer/VBoxContainer/VBoxContainer/MarginContainer/VBoxContainer" unique_id=1765645505]
 layout_mode = 2
 text = "Local"
 label_settings = SubResource("LabelSettings_uhj5c")
 vertical_alignment = 1
 
-[node name="ButtonHostLocal" type="Button" parent="Control/PanelContainer/HBoxContainer/MarginContainer/VBoxContainer" unique_id=210241001]
+[node name="ButtonHostLocal" type="Button" parent="Control/PanelContainer/MarginContainer/VBoxContainer/VBoxContainer/MarginContainer/VBoxContainer" unique_id=210241001]
 unique_name_in_owner = true
 layout_mode = 2
 text = "Host Local"
 
-[node name="HSeparator3" type="HSeparator" parent="Control/PanelContainer/HBoxContainer/MarginContainer/VBoxContainer" unique_id=684237888]
+[node name="HSeparator3" type="HSeparator" parent="Control/PanelContainer/MarginContainer/VBoxContainer/VBoxContainer/MarginContainer/VBoxContainer" unique_id=684237888]
 layout_mode = 2
 
-[node name="ButtonJoinLocal" type="Button" parent="Control/PanelContainer/HBoxContainer/MarginContainer/VBoxContainer" unique_id=1597795618]
+[node name="ButtonJoinLocal" type="Button" parent="Control/PanelContainer/MarginContainer/VBoxContainer/VBoxContainer/MarginContainer/VBoxContainer" unique_id=1597795618]
 unique_name_in_owner = true
 layout_mode = 2
 text = "Join Local"
 
-[node name="HSeparator4" type="HSeparator" parent="Control/PanelContainer/HBoxContainer/MarginContainer/VBoxContainer" unique_id=1607368940]
+[node name="MarginContainer2" type="MarginContainer" parent="Control/PanelContainer/MarginContainer/VBoxContainer/VBoxContainer" unique_id=110763693]
 layout_mode = 2
-theme_override_constants/separation = 42
+theme_override_constants/margin_left = 15
+theme_override_constants/margin_top = 15
+theme_override_constants/margin_right = 15
+theme_override_constants/margin_bottom = 15
 
-[node name="Label3" type="Label" parent="Control/PanelContainer/HBoxContainer/MarginContainer/VBoxContainer" unique_id=95738550]
-layout_mode = 2
-text = "Steam"
-label_settings = SubResource("LabelSettings_mu8pm")
-vertical_alignment = 1
-
-[node name="ButtonHost" type="Button" parent="Control/PanelContainer/HBoxContainer/MarginContainer/VBoxContainer" unique_id=739137934]
-unique_name_in_owner = true
-layout_mode = 2
-text = "Host"
-
-[node name="HSeparator2" type="HSeparator" parent="Control/PanelContainer/HBoxContainer/MarginContainer/VBoxContainer" unique_id=1651118911]
+[node name="HBoxContainer" type="HBoxContainer" parent="Control/PanelContainer/MarginContainer/VBoxContainer/VBoxContainer/MarginContainer2" unique_id=354289829]
 layout_mode = 2
 
-[node name="Label2" type="Label" parent="Control/PanelContainer/HBoxContainer/MarginContainer/VBoxContainer" unique_id=636712401]
-layout_mode = 2
-text = "Lobby code:"
-vertical_alignment = 1
-
-[node name="LineEditLobbyId" type="LineEdit" parent="Control/PanelContainer/HBoxContainer/MarginContainer/VBoxContainer" unique_id=1687574402]
-unique_name_in_owner = true
-layout_mode = 2
-placeholder_text = "enter here.  .  ."
-
-[node name="ButtonJoin" type="Button" parent="Control/PanelContainer/HBoxContainer/MarginContainer/VBoxContainer" unique_id=762247347]
-unique_name_in_owner = true
-layout_mode = 2
-disabled = true
-text = "Join"
-
-[node name="MarginContainerMaps" type="MarginContainer" parent="Control/PanelContainer/HBoxContainer" unique_id=61083609]
+[node name="MarginContainer" type="MarginContainer" parent="Control/PanelContainer/MarginContainer/VBoxContainer/VBoxContainer/MarginContainer2/HBoxContainer" unique_id=16597261]
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_constants/margin_left = 15
@@ -141,20 +211,103 @@ theme_override_constants/margin_top = 15
 theme_override_constants/margin_right = 15
 theme_override_constants/margin_bottom = 15
 
-[node name="VBoxContainer" type="VBoxContainer" parent="Control/PanelContainer/HBoxContainer/MarginContainerMaps" unique_id=949677690]
+[node name="VBoxContainer" type="VBoxContainer" parent="Control/PanelContainer/MarginContainer/VBoxContainer/VBoxContainer/MarginContainer2/HBoxContainer/MarginContainer" unique_id=219785128]
 layout_mode = 2
 
-[node name="Label" type="Label" parent="Control/PanelContainer/HBoxContainer/MarginContainerMaps/VBoxContainer" unique_id=1410190540]
+[node name="Label3" type="Label" parent="Control/PanelContainer/MarginContainer/VBoxContainer/VBoxContainer/MarginContainer2/HBoxContainer/MarginContainer/VBoxContainer" unique_id=95738550]
+layout_mode = 2
+text = "Steam"
+label_settings = SubResource("LabelSettings_mu8pm")
+vertical_alignment = 1
+
+[node name="ButtonHost" type="Button" parent="Control/PanelContainer/MarginContainer/VBoxContainer/VBoxContainer/MarginContainer2/HBoxContainer/MarginContainer/VBoxContainer" unique_id=739137934]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Host"
+
+[node name="HSeparator2" type="HSeparator" parent="Control/PanelContainer/MarginContainer/VBoxContainer/VBoxContainer/MarginContainer2/HBoxContainer/MarginContainer/VBoxContainer" unique_id=1651118911]
+layout_mode = 2
+
+[node name="Label2" type="Label" parent="Control/PanelContainer/MarginContainer/VBoxContainer/VBoxContainer/MarginContainer2/HBoxContainer/MarginContainer/VBoxContainer" unique_id=636712401]
+layout_mode = 2
+text = "Lobby code:"
+vertical_alignment = 1
+
+[node name="LineEditLobbyId" type="LineEdit" parent="Control/PanelContainer/MarginContainer/VBoxContainer/VBoxContainer/MarginContainer2/HBoxContainer/MarginContainer/VBoxContainer" unique_id=1687574402]
+unique_name_in_owner = true
+layout_mode = 2
+placeholder_text = "enter here.  .  ."
+
+[node name="ButtonJoin" type="Button" parent="Control/PanelContainer/MarginContainer/VBoxContainer/VBoxContainer/MarginContainer2/HBoxContainer/MarginContainer/VBoxContainer" unique_id=762247347]
+unique_name_in_owner = true
+layout_mode = 2
+disabled = true
+text = "Join"
+
+[node name="MarginContainerMaps" type="MarginContainer" parent="Control/PanelContainer/MarginContainer/VBoxContainer/VBoxContainer/MarginContainer2/HBoxContainer" unique_id=61083609]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/margin_left = 15
+theme_override_constants/margin_top = 15
+theme_override_constants/margin_right = 15
+theme_override_constants/margin_bottom = 15
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Control/PanelContainer/MarginContainer/VBoxContainer/VBoxContainer/MarginContainer2/HBoxContainer/MarginContainerMaps" unique_id=949677690]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="Control/PanelContainer/MarginContainer/VBoxContainer/VBoxContainer/MarginContainer2/HBoxContainer/MarginContainerMaps/VBoxContainer" unique_id=1410190540]
 layout_mode = 2
 text = "Maps"
 label_settings = SubResource("LabelSettings_omy8q")
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="HSeparator" type="HSeparator" parent="Control/PanelContainer/HBoxContainer/MarginContainerMaps/VBoxContainer" unique_id=795742883]
+[node name="HSeparator" type="HSeparator" parent="Control/PanelContainer/MarginContainer/VBoxContainer/VBoxContainer/MarginContainer2/HBoxContainer/MarginContainerMaps/VBoxContainer" unique_id=795742883]
 layout_mode = 2
 
-[node name="CheckBoxExample" type="CheckBox" parent="Control/PanelContainer/HBoxContainer/MarginContainerMaps/VBoxContainer" unique_id=950651751]
+[node name="CheckBoxExample" type="CheckBox" parent="Control/PanelContainer/MarginContainer/VBoxContainer/VBoxContainer/MarginContainer2/HBoxContainer/MarginContainerMaps/VBoxContainer" unique_id=950651751]
 layout_mode = 2
 button_group = SubResource("ButtonGroup_i5wg5")
 text = "Test Map select"
+
+[node name="BackgroundVisuals" type="Node3D" parent="." unique_id=1947417767]
+unique_name_in_owner = true
+
+[node name="Camera3D" type="Camera3D" parent="BackgroundVisuals" unique_id=2118710299]
+transform = Transform3D(1, 0, 0, 0, 1.0000001, 0, 0, 0, 1.0000001, -0.33824778, 0.8488822, -0.59194714)
+
+[node name="MainMenuWorldEnv" type="WorldEnvironment" parent="BackgroundVisuals" unique_id=712536863]
+unique_name_in_owner = true
+environment = SubResource("Environment_3c04x")
+
+[node name="main_menu_bg" parent="BackgroundVisuals" unique_id=1539574643 instance=ExtResource("2_omy8q")]
+transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, 0, 0, 0)
+
+[node name="Lights" type="Node3D" parent="BackgroundVisuals" unique_id=170787115]
+
+[node name="SpotLight3D" type="SpotLight3D" parent="BackgroundVisuals/Lights" unique_id=778071422]
+transform = Transform3D(1, 0, 0, 0, 0.9443477, 0.32894903, 0, -0.32894903, 0.9443477, -0.31735075, 1.2493589, 0)
+
+[node name="CSGBox3D" type="CSGBox3D" parent="BackgroundVisuals/Lights" unique_id=132987884]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.20630991, -1.2351509)
+size = Vector3(3.8320313, 0.763916, 2.3632813)
+material = SubResource("StandardMaterial3D_joh67")
+
+[node name="CSGBox3D4" type="CSGBox3D" parent="BackgroundVisuals/Lights" unique_id=1875783661]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.8538612, -1.2620299)
+size = Vector3(3.8320313, 0.763916, 2.3632813)
+material = SubResource("StandardMaterial3D_joh67")
+
+[node name="CSGBox3D2" type="CSGBox3D" parent="BackgroundVisuals/Lights" unique_id=1216011542]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.1728995, 0.79128647, -1.7222431)
+size = Vector3(0.5616455, 1.9049072, 0.36621094)
+material = SubResource("StandardMaterial3D_joh67")
+
+[node name="CSGBox3D3" type="CSGBox3D" parent="BackgroundVisuals/Lights" unique_id=484245431]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.8876219, 0.79128647, -1.7222431)
+size = Vector3(0.5616455, 1.9049072, 0.36621094)
+material = SubResource("StandardMaterial3D_joh67")
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="BackgroundVisuals" unique_id=594321780]
+libraries/ = SubResource("AnimationLibrary_3c04x")
+autoplay = &"camera_sway"

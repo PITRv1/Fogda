@@ -17,7 +17,7 @@ var lobby_timer : Timer
 var countdown_time : int = 3
 
 var round_timer : Timer
-var round_time_left : int = 5 # Default match length: 180 seconds (3 minutes)
+var round_time_left : int = 120 # Default match length: 180 seconds (3 minutes)
 
 var current_selected_map : MapUiResource
 
@@ -56,6 +56,12 @@ func _on_lobby_created(results : int, lobby_id : int):
 		multiplayer.multiplayer_peer = peer
 		multiplayer.peer_connected.connect(_on_peer_connected)
 		multiplayer.peer_disconnected.connect(remove_player)
+		
+		if current_selected_map:
+			Global.game_manager.load_map(current_selected_map)
+		else:
+			push_error("Steam Host: No map selected!")
+		
 		add_player(1)
 		DisplayServer.clipboard_set(str(Network.lobby_id))
 
@@ -118,7 +124,7 @@ func host_local():
 	
 	is_host = true
 	
-	Global.game_manager.load_map(current_selected_map.map_scene)
+	Global.game_manager.load_map(current_selected_map)
 	
 	add_player(1)
 	
@@ -136,6 +142,8 @@ func join_local(ip_address : String = LOCAL_IP):
 	print("Joined local ENet server at ", ip_address)
 	
 func check_lobby_capacity():
+	if not multiplayer.is_server(): return
+	
 	var total_players = multiplayer.get_peers().size() + 1
 	
 	if total_players >= 2:
@@ -181,11 +189,10 @@ func rpc_cancel_countdown():
 
 @rpc("authority", "call_local", "reliable")
 func rpc_start_game():
-	print('game started')
 	game_started.emit()
 	
 	if multiplayer.is_server():
-		round_time_left = 180
+		round_time_left = 5
 		round_timer.start()
 		rpc_update_round_countdown.rpc(round_time_left)
 	
@@ -195,5 +202,4 @@ func rpc_update_round_countdown(time : int):
 
 @rpc("authority", "call_local", "reliable")
 func rpc_end_round():
-	print('round ended')
 	round_ended.emit()

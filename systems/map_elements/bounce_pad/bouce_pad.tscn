@@ -1,0 +1,8 @@
+[gd_scene format=3 uid="uid://c1h8ep0svrucl"]
+
+[ext_resource type="Script" uid="uid://g38yupq27ubr" path="res://systems/map_elements/bounce_pad/bouce_pad.gd" id="1_lu8q7"]
+
+[node name="BoucePad" type="Area3D" unique_id=747439380]
+script = ExtResource("1_lu8q7")
+
+[connection signal="body_entered" from="." to="." method="_on_body_entered"]

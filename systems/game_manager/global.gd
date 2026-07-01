@@ -96,5 +96,5 @@ func rpc_receive_spawn_position(spawn_pos : Vector3):
 	
 	if is_instance_valid(my_player):
 		my_player.global_position = spawn_pos
-		print("Client: Successfully spawned at assigned position: ", spawn_pos)
+		#print("Client: Successfully spawned at assigned position: ", spawn_pos)
 	

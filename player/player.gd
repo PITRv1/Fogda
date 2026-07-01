@@ -26,6 +26,8 @@ class_name Player extends CharacterBody3D
 @export_category("Global movement variables")
 @export var local_gravity := 16.0
 @export var jump_power := 5.0
+@export_range(0.0, 1.0, 0.01) var jump_buffer_time := 0.15
+@export_range(0.0, 1.0, 0.01) var coyote_time := 0.25
 
 @export_group("Ground")
 @export var walk_speed := 6.0
@@ -229,20 +231,20 @@ func _handle_jump():
 
 func jump() -> void:
 	jump_avalible = false
-	#self.velocity.y = 0 
+	self.velocity.y = 0 
 	self.velocity.y += jump_power
 
 
 func start_jump_buffer():
 	if jump_buffer_running: return
 	
-	get_tree().create_timer(0.15).timeout.connect(_on_jump_buffer_timer_timeout)
+	get_tree().create_timer(jump_buffer_time).timeout.connect(_on_jump_buffer_timer_timeout)
 	jump_buffer_running = true
 	
 func start_coyote_timer():
 	if coyote_timer_running: return
 	
-	get_tree().create_timer(0.15).timeout.connect(_on_coyote_timer_timeout)
+	get_tree().create_timer(coyote_time).timeout.connect(_on_coyote_timer_timeout)
 	coyote_timer_running = true
 
 func _on_jump_buffer_timer_timeout() -> void:

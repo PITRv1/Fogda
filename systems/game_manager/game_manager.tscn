@@ -12,5 +12,5 @@ world_conatiner = NodePath("3DWorldContainer")
 [node name="3DWorldContainer" type="Node3D" parent="." unique_id=1331643036]
 
 [node name="MultiplayerSpawner" type="MultiplayerSpawner" parent="." unique_id=1382485271]
-_spawnable_scenes = PackedStringArray("uid://v6njfv4epi7j", "uid://c6b3b7ym72bhq", "uid://jlkphej625hy")
+_spawnable_scenes = PackedStringArray("uid://v6njfv4epi7j", "uid://c6b3b7ym72bhq", "uid://jlkphej625hy", "uid://bokkqqqarc0v2")
 spawn_path = NodePath("../3DWorldContainer")
