@@ -29,15 +29,15 @@ func hit_other(hit_player_id : int):
 	pass
 
 	
-func receive_tag(tagger_player_id : int):
+func receive_tag(tagger_player_id : int, hitter_velocity : Vector3):
 	if not owner_player.is_multiplayer_authority(): return
 		
 	#print("Tagged by Player #", tagger_player_id)
 	tagged = true
 	
-	receive_hit(tagger_player_id)
+	receive_hit(tagger_player_id, hitter_velocity)
 
-func receive_hit(hitting_player_id : int):
+func receive_hit(hitting_player_id : int, hitter_velocity : Vector3):
 	var hitting_player : Player = Global.get_player_by_id(hitting_player_id)
 	
 	var true_hitting_center : Vector3 = Vector3(hitting_player.global_position.x, hitting_player.global_position.y + hitting_player.collision.shape.height * 0.5 , hitting_player.global_position.z)
@@ -45,8 +45,4 @@ func receive_hit(hitting_player_id : int):
 	
 	var hit_direction = true_hitting_center.direction_to(true_owner_center)
 	
-	owner_player.velocity += hit_direction * hitting_player.tag_component.hit_power
-	
-	
-	#owner_player.velocity += -hitting_player.camera_controller.main_camera.global_transform.basis.z * hitting_player.tag_component.hit_power
-	#print("Hit by Player #", hitting_player_id)
+	owner_player.velocity += hit_direction * hitting_player.tag_component.hit_power + Vector3(hitter_velocity.x,0,hitter_velocity.z) * 0.75

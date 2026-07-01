@@ -1,7 +1,5 @@
 class_name Player extends CharacterBody3D
 
-@export var dummy : bool = false
-
 @export_category("Controllers")
 @export var camera_controller : CameraController
 @export var input_handeler : InputHandeler
@@ -92,26 +90,13 @@ var is_dead : bool = false
 @export var disabled : bool = false
 
 func _enter_tree() -> void:
-	if dummy: 
-		push_warning("A dummy exists on the server on id: 9999")
-		self.name = str(9999)
-	
 	set_multiplayer_authority(name.to_int())
 	multiplayer_syncher.set_multiplayer_authority(name.to_int())
 	add_to_group("players")
 
 func _ready() -> void:
 	disabled = true
-	
-	if dummy:
-		state_machine.disabled = true
-		set_process(false)
-		set_physics_process(false)
-		
-		tag_component.setup(self)
-		visual_controller.setup(self)
-		return
-	
+
 	if is_multiplayer_authority():
 		camera_controller.setup(self)
 		state_machine.setup(self)
@@ -353,16 +338,8 @@ func hit():
 	
 	
 	if collider is Player:
-		# Bypass the normal server logic for testdummy cause it wont work otherwise
-		if collider.dummy:
-			if self.tag_component.tagged:
-				if not collider.tag_component.tagged:
-					tag_component.tagged_other(collider.name.to_int())
-					collider.tag_component.receive_tag(self.get_multiplayer_authority())
-			return
-		
 		var target_peer_id = collider.get_multiplayer_authority()
-		Global.server_process_hit_attempt.rpc_id(1, target_peer_id)
+		Global.server_process_hit_attempt.rpc_id(1, target_peer_id, self.velocity)
 		
 	else:
 		velocity += self.camera_controller.main_camera.global_transform.basis.z * self.tag_component.hit_power * 0.5

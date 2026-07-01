@@ -3,7 +3,7 @@ extends Node
 var game_manager : GameManager
 
 @rpc("any_peer", "reliable", "call_local")
-func server_process_hit_attempt(target_id : int):
+func server_process_hit_attempt(target_id : int, hitter_velocity : Vector3):
 	if not multiplayer.is_server(): return
 	
 	var tagger_id := multiplayer.get_remote_sender_id()
@@ -14,45 +14,36 @@ func server_process_hit_attempt(target_id : int):
 		push_error("Either the tagger player or the target player can not be found")
 		return 
 	
-	if target_player:
-		if tagger_player.tag_component.tagged:
-			if not target_player.tag_component.tagged:
-				
-				client_hit_confirmed.rpc_id(tagger_id, tagger_id, target_id, true)
-				client_you_were_hit.rpc_id(target_id, target_id, tagger_id, true)
-				
-			else:
-				client_hit_confirmed.rpc_id(tagger_id, tagger_id, target_id, false)
-				client_you_were_hit.rpc_id(target_id, target_id, tagger_id, false)
-			
-		else:
-			client_hit_confirmed.rpc_id(tagger_id, tagger_id, target_id, false)
-			client_you_were_hit.rpc_id(target_id, target_id, tagger_id, false)
-			
-	# TODO : Implament Normal hit mechanics and optimize this "if" hellscape c
-
-
-@rpc("any_peer", "reliable", "call_local")
-func client_hit_confirmed(tagger_id : int, tagged_id: int, tag_happened : bool) -> void:
-	if not multiplayer.is_server() and multiplayer.get_remote_sender_id() != 1: 
-		return
+	var tag_happened := tagger_player.tag_component.tagged and not target_player.tag_component.tagged
 	
-	if tag_happened:
-		get_player_by_id(tagger_id).tag_component.tagged_other(tagged_id)
-	else:
-		get_player_by_id(tagger_id).tag_component.hit_other(tagged_id)
-		
+	client_hit_confirmed.rpc_id(tagger_id, tagger_id, target_id, tag_happened)
+	client_you_were_hit.rpc_id(target_id, target_id, tagger_id, hitter_velocity, tag_happened)
 
+func _is_from_server() -> bool:
+	return multiplayer.is_server() or multiplayer.get_remote_sender_id() == 1
+ 
+ 
 @rpc("any_peer", "reliable", "call_local")
-func client_you_were_hit(tagged_id : int,tagger_id: int, tag_happened : bool) -> void:
-	if not multiplayer.is_server() and multiplayer.get_remote_sender_id() != 1: 
-		return
+func client_hit_confirmed(tagger_id : int, tagged_id : int, tag_happened : bool) -> void:
+	if not _is_from_server(): return
 	
+	var tag_component := get_player_by_id(tagger_id).tag_component
 	if tag_happened:
-		get_player_by_id(tagged_id).tag_component.receive_tag(tagger_id)
+		tag_component.tagged_other(tagged_id)
 	else:
-		get_player_by_id(tagged_id).tag_component.receive_hit(tagger_id)
-
+		tag_component.hit_other(tagged_id)
+ 
+ 
+@rpc("any_peer", "reliable", "call_local")
+func client_you_were_hit(tagged_id : int, tagger_id : int, hitter_velocity : Vector3, tag_happened : bool) -> void:
+	if not _is_from_server(): return
+	
+	var tag_component := get_player_by_id(tagged_id).tag_component
+	if tag_happened:
+		tag_component.receive_tag(tagger_id, hitter_velocity)
+	else:
+		tag_component.receive_hit(tagger_id, hitter_velocity)
+ 
 	
 func get_player_by_id(id : int) -> Player:
 	var players := get_tree().get_nodes_in_group("players")
@@ -63,6 +54,10 @@ func get_player_by_id(id : int) -> Player:
 	
 	var player : Player = players[player_index]
 	return player
+
+
+
+
 
 
 func query_space(on_this_node : Node3D, from : Vector3, to : Vector3) -> Dictionary:

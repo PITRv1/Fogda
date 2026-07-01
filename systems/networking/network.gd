@@ -192,7 +192,7 @@ func rpc_start_game():
 	game_started.emit()
 	
 	if multiplayer.is_server():
-		round_time_left = 5
+		round_time_left = 120
 		round_timer.start()
 		rpc_update_round_countdown.rpc(round_time_left)
 	
